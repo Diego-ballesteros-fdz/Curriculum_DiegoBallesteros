@@ -1,0 +1,27 @@
+index:
+imagen en el medio que cubre toda la pantalla y que va rotando cada cierto tiempo.
+unicamente se verá el menu del index al poner el raton en el icono de la pagina
+temdra un estilo minimal con algo de toque lujoso.
+se ampliara la letra de enlace.
+antes de activarlo se vera una linea fina en marfil con sombreado.
+con un solo scroll bajara a la siguiente pantalla del index maneniendo el menu
+zona de nav inferior en dorado suave con toque mate y letra gris.
+iconos de redes sociales minimal, que se expanden cuando pasa el raton por encima.
+
+
+recetas:
+boton flotante con menu para elegir estilo region o todo.
+fotos de distintos tamaños a izquierda y derecha siendo enlaces de la receta.
+al lado libre de cada foto de receta breve leyenda de la misma.
+
+foro:
+menu izquierdo con mensajes directos, chats, seguidos y buscador de #
+iframe central con estilo de chat pero a in solo lateral, y las respuestas anidadas del comentario principal
+barra en la zona de abajo, rectangular para escribir y enviar, se modifica a contestar cuando pulsas un comentario
+
+sign in/log in:
+pantalla flotante que sale por la derecha para rellenar, para inciar sesion.
+al pulsar en login se restaura la pestaña anterior y coloca formulario log in.
+color gris claro,letra negro puro, redondeado
+
+

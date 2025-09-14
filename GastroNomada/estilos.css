@@ -1,0 +1,802 @@
+/* Estilo generico*/
+    *{
+        margin: 0;
+        padding: 0;
+    }
+    body{
+        background-color: #404040;
+        z-index: 1;
+    }
+
+/* nav*/
+    #nav:hover{
+        background-color: #252525;
+        color: #C5A880;
+        transition: color 0.3s ease;
+    }
+    #nav:hover a{
+        color: #FAF3E0;
+        transition: color 0.3s ease;
+    }
+    #nav{
+        position:sticky;
+        background-color: #C5A880;
+        transition: color 0.3s ease;
+        margin:0%;
+        width: 100%;
+        height: 100px;
+        z-index: 10;
+        top: 0;
+    }
+    #nav a{
+        position: relative;
+        color: #1C1C1C;
+        transition: color 0.3s ease;
+        font-size: 18px;
+        left: 250px;
+        bottom: 40px;
+        margin-left: 40px;
+        text-decoration: none;
+    }
+        
+    #nav button > img{
+        position: relative;
+    bottom: 1px;
+    left: -2px;
+    border: none;
+    width: 30px;
+    height: 30px;
+    background-size: cover;
+    background-position: center;
+    }
+
+    #nav .lupa:hover{
+        display: none;
+    content: url(./imagenes/lupa_nav_img_hover.png);
+    }
+    #nav .perfil:hover {
+        display: none;
+        content: url(./imagenes/perfil_img_hover.png);
+    }
+    #nav:hover .lupa{
+        content: url(./imagenes/lupa_nav_hover.png);
+    }
+    #nav:hover .perfil{
+        content: url(./imagenes/perfil_nav_hover.png);
+    }
+    #nav img{
+        position: relative;
+        left:-10px;
+        bottom: -40px;
+    }
+    #nav .lupa{
+        position: absolute;
+        left: 1276px;
+        bottom: 30px;
+        width: 30px;
+    }
+    #nav .bot_perfil{
+        position: absolute;
+        left: 1037px;
+        bottom: 30px;
+        width: 30px;
+        height: 30px;
+        background: none;
+        border: none; 
+    }
+
+    #nav a:hover{
+        color: #C5A880;
+        transition: color 0.3s ease;
+    }
+
+        /*desplegables*/
+        .desplegable_recetas{
+            position: relative;
+            bottom: 39px;
+            left: 260px;
+            background: none;
+            border: none; 
+            font-size: 18px;
+            font-family: 'Times New Roman', Times, serif;
+            color: #1C1C1C;
+            transition: color 0.3s ease;
+        }
+        #nav:hover .desplegable_recetas{
+            color: #FAF3E0;
+            transition: color 0.3s ease;
+        }
+        #nav .desplegable_recetas:hover{
+        
+            color: #C5A880;
+            transition: color 0.3s ease;
+        }
+        
+        .desplegable_paises{
+            position: relative;
+            bottom: 39px;
+            left: 240px;
+            background: none;
+            border: none; 
+            font-size: 18px;
+            font-family: 'Times New Roman', Times, serif;
+            color: #1C1C1C;
+            transition: color 0.3s ease;
+        }
+        #nav:hover .desplegable_paises{
+            color: #FAF3E0;
+            transition: color 0.3s ease;
+        }
+        #nav .desplegable_paises:hover{
+        
+            color: #C5A880;
+            transition: color 0.3s ease;
+        }
+        .desplegable {
+            position: relative;
+            z-index: 20;
+        }
+            /*carrusel*/
+                .imagenFondo{
+                position: relative;
+                z-index: 1;
+                }
+        .desplegable{
+            position: relative;
+            z-index: 10;
+        }
+        
+        .desplegable_content {
+            display: none;
+            position: fixed; 
+            background-color:#252525;
+            min-width: 600px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            border-radius: 40px;
+            color: #FAF3E0;
+            z-index: 30;
+            padding: 10px;
+            top: 82px;
+          left: 29%;
+            transform: translateX(-50%);
+        }
+        .desplegable_content img{
+            transition: transform 0.3s ease; 
+            transform-origin: center center; 
+            display: block; 
+            margin: 10px auto; 
+        }
+        .desplegable_content img:hover{
+            transform: scale(1.2); 
+            filter: brightness(1.1); 
+        }
+         
+        .desplegable_content.active {
+            display: block;
+            position: fixed;
+          }
+        
+        .desplegable_cont_recetas {
+            display: none;
+            position: fixed; 
+            background-color: #252525;
+            min-width: 392px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            border-radius: 40px;
+            color: #FAF3E0;
+            z-index: 30;
+            padding: 10px;
+            top: 82px;
+            left: 41%;
+            transform: translateX(-50%);
+            transition: color 0.3s ease;
+        }
+        .desplegable_cont_perfil {
+            display: none;
+            position: fixed;
+            background-color: #252525;
+            min-width: 240px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            border-radius: 26px;
+            color: #FAF3E0;
+            z-index: 30;
+            padding: 40px;
+            top: 83px;
+            left: 69%;
+            transform: translateX(-50%);
+            transition: color 0.3s ease;
+            height: 207px;
+        }
+        .desplegable_cont_perfil.active {
+            display: block;
+            position: fixed;
+          }
+        .desplegable_cont_recetas a{
+            text-decoration: none;
+            color: #FAF3E0;
+            margin: 10px;
+        }
+        .desplegable_cont_recetas a:hover{
+            color: #C5A880;
+            transition: color 0.3s ease;
+        }
+         
+        .desplegable_cont_recetas.active {
+            display: block;
+            position: fixed;
+          }
+        
+        .desplegable_content>img{
+            height: 30;
+            width: 50;
+          }
+        .desplegable_cont_perfil a{
+            text-decoration: none;
+            color: #C5A880;
+          }
+        
+          /*diseño del log_in*/
+            .desplegable_cont_perfil {
+            margin: 30px;
+            }
+            .desplegable_cont_perfil input, textarea {
+                background: #222; 
+                color: #d4af37; 
+                font-family: 'Playfair Display', serif;
+                font-size: 16px;
+                padding: 10px;
+                border: 2px solid #d4af37;
+                border-radius: 8px;
+                outline: none;
+                transition: all 0.3s ease-in-out;
+            }
+            
+            
+            .desplegable_cont_perfil input::placeholder, 
+            textarea::placeholder {
+                color: rgba(212, 175, 55, 0.6); 
+                font-style: italic;
+            }
+            
+            
+            .desplegable_cont_perfil input:focus, 
+            textarea:focus {
+                background: #1a1a1a;
+                border-color: #ffd700;
+                box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            }
+            
+        
+            .desplegable_cont_perfil textarea {
+                height: 120px;
+                resize: none; 
+            }
+            
+            .desplegable_cont_perfil select {
+                background: #222; 
+                color: #d4af37; 
+                font-family: 'Playfair Display', serif; 
+                font-size: 16px;
+                padding: 10px;
+                border: 2px solid #d4af37;
+                border-radius: 8px;
+                outline: none;
+                cursor: pointer;
+                appearance: none;
+                transition: all 0.3s ease-in-out;
+            }
+            
+            .desplegable_cont_perfil select:focus {
+                background: #1a1a1a;
+                border-color: #ffd700;
+                box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            }
+            
+            .desplegable_cont_perfil option {
+                background: #222; 
+                color: #d4af37; 
+                font-size: 16px;
+            }
+            
+            
+            .desplegable_cont_perfil option:hover {
+                background: #444;
+            }
+
+
+/* footer*/
+
+    footer{
+        background-color: #C5A880;  
+    }
+    .footer{
+        position:absolute;
+        background-color: #C5A880;
+        transition: color 0.3s ease;
+        width: 100%;
+        height: 80px;
+        color:#1C1C1C;
+    }
+    .footer a{
+        position: relative;
+        color: #1C1C1C;
+        transition: color 0.3s ease;
+        font-size: 18px;
+        left: 130px;
+        bottom: 18px;
+        margin-left: 20px;
+        text-decoration: none;
+    }
+    .footer:hover{
+        background-color: #252525;
+        color: #FAF3E0;
+        transition: color 0.3s ease;
+    }
+    .footer:hover #insta{
+        content: url(./imagenes/Redes_Sociales/instagram_fotter_hover.png);
+        transition: color 0.3s ease;
+        width: 20px;
+        height: 20px;
+    }
+    .footer:hover #X{
+        content: url(./imagenes/Redes_Sociales/X_fotter_hover.png);
+        transition: color 0.3s ease;
+        width: 20px;
+        height: 20px;
+    }
+    .footer:hover #facebook{
+        content: url(./imagenes/Redes_Sociales/facebookFotter_hover.png);
+        transition: color 0.3s ease;
+        width: 20px;
+        height: 20px;
+    }
+    .footer:hover #insta:hover{
+        content: url(./imagenes/Redes_Sociales/instagram_a_hover.png);
+        transition: color 0.3s ease;
+        width: 20px;
+        height: 20px;
+    }
+    .footer:hover #X:hover{
+        content: url(./imagenes/Redes_Sociales/X_a_hover.png);
+        transition: color 0.3s ease;
+        width: 20px;
+        height: 20px;
+    }
+    .footer:hover #facebook:hover{
+        content: url(./imagenes/Redes_Sociales/facebooka_hover.png);
+
+    }
+
+
+/*article*/
+    article h1{
+        color: #C5A880;
+        margin: 20px;
+    }
+    article{
+        color: #FAF3E0;
+        width: 100%;
+        height: 100%;
+        font-size:medium;
+        
+    }
+    article p{
+        margin: 20px;
+    }
+    article b{
+        color: #C5A880;
+    }
+
+    article a{
+        color: #C5A880;
+        text-decoration: none;
+      }
+
+
+/* Carrusel del index*/
+    .imagenFondo{
+        max-width: 800px; 
+        height: 400px;
+        overflow: visible;
+        position:relative;
+        margin:auto;
+        display: flex;
+        scroll-snap-type: x mandatory;
+        z-index: 1;
+    
+        
+    }
+    .seccion{
+        display: flex;
+        animation: slide 40s infinite;
+    }
+    .seccion img{
+        width: 100%; 
+        height: 400px; 
+        object-fit: cover; 
+        object-position: center; 
+        flex-shrink: 0; 
+        scroll-snap-align: start;
+    }
+
+    @keyframes slide {
+        0% { transform: translateX(0); } 
+        25% { transform: translateX(-100%); } 
+        50% { transform: translateX(-200%); }
+        75% { transform: translateX(-300%); } 
+        100% { transform: translateX(0); } 
+      }
+
+/*otras paginas*/
+        /*pagina de españa*/
+
+            .seccion2{
+                display:inline;
+                animation: slide 40s infinite;
+            }
+            .seccion2 img{
+                width: 33%; 
+                height: 300px; 
+                object-fit:cover; 
+                object-position: center; 
+                flex-shrink: 0; 
+                scroll-snap-align: start; 
+                transition: transform 0.3s ease;
+            }
+            /*animacion agrandar*/
+            .seccion2 img:hover{
+                transform: scale(1.05); 
+                filter: brightness(1.1); 
+            }
+
+            .imagen{
+                cursor: pointer;
+            }
+
+            .img_españa{
+                margin: 50px;
+                left: 39%;
+                position: relative;
+            }
+
+            .titulo_Esp {
+                position: relative;
+                left: 42%;
+                width: 188px;
+            }
+            /*Desplegable receta*/
+
+            .Des_Recetas h3{
+                color: #C5A880;
+            }
+
+            .Des_Recetas {
+                position: fixed;
+                top: 80px;
+                left: 0;
+                width: 90%;
+                height: 90%;
+                background-color: #252525;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                opacity: 0;
+                visibility: hidden;
+                z-index: 11;
+                border-radius: 1%;
+                transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+            }
+            
+            .Des_Recetas.active {
+                opacity: 1;
+                visibility: visible;
+            }
+            .cerrar {
+                position: absolute;
+                top: 27px;
+                right: 23px;
+                background:#404040;
+                color:#FAF3E0;
+                border: none;
+                padding: 10px;
+                cursor: pointer;
+                font-size: 18px;
+                border-radius: 20%;
+            }
+            .cerrar:hover{
+                background:#252525;
+            }
+
+            .receta_ingredientes{
+                position: relative;
+                right: 490px;
+                padding: 5px;
+                padding: 20px;
+                color: #faf3e0a2;
+                
+            }
+            .receta_cabecera{
+                position: relative;
+                right: 310px;
+                margin-right: 5px;
+                padding: 20px;
+                color: #faf3e0a2;
+            }
+            .receta_contenido{
+                position: relative;
+                right: -6px;
+                margin-right: 16px;
+                margin-left: -1px;
+                padding: 20px;
+                color: #faf3e0a2;
+            }
+            #img_receta{
+                position: absolute;
+                width: 600px;
+                height: auto;
+                margin: 0;
+                left: 745px;
+                top: 130px;
+                z-index: 2;
+            }
+
+
+        /*Foro Gastronomico*/
+
+            #art_Foro{
+                color: #FAF3E0;
+                width: 1005px;
+                height: 765px;
+                font-size: medium;
+            }
+            .responder{
+                position: relative;
+                bottom: -452px;
+                left: 52px;
+            }
+            .nombre{
+                position: relative;
+                top:  67px;
+            }
+            .comentario{
+                position: relative;
+                top: -123px;
+            }
+            .EscribirComentario{
+                position: relative;
+                left: -127px;
+            }
+            .enviar{
+                position: relative;
+                left: -122px;
+                background-color: #C5A880;
+                color: #252525;
+            }
+            .fotoChat{
+                position: relative;
+                left: 92px;
+                top: -129px;
+                width: 423px;
+            }
+            .fotoChat img{
+                width: 356px;
+                position: relative;
+                top: -215px;
+            }
+            .foro_Gast {
+                position: absolute;
+                left: 632px;
+                margin: 0;
+                width: 830px;
+                height: 601px;
+          }
+          
+
+        /*Recetas tradicionales*/
+            .img_trad {
+                position: relative;
+                left: 31%;
+                margin: 10px;
+                width: 556px;
+            }
+            .tit_trad {
+                position: relative;
+                left: 27%;
+                width: 650px;
+            }
+
+            .seccion2_trad{
+                display:inline;
+                animation: slide 40s infinite;
+            }
+            .seccion2_trad img{
+                width: 19.7%; 
+                height: 300px; 
+                object-fit:cover; 
+                object-position: center; 
+                flex-shrink: 0; 
+                scroll-snap-align: start; 
+                transition: transform 0.3s ease;
+            }
+         /*animacion agrandar*/
+            .seccion2_trad img:hover{
+                transform: scale(1.05); 
+                filter: brightness(1.1); 
+            }
+
+
+        /*Retas modernas*/
+            .img_mod {
+            position: relative;
+            left: 31%;
+            margin: 10px;
+            width: 556px;
+            }
+           
+            .tit_mod {
+                position: relative;
+                left: 32%;
+                width: 650px;
+            }
+
+            .seccion2_mod{
+                display:inline;
+                animation: slide 40s infinite;
+            }
+            .seccion2_mod img{
+                width: 19.7%; 
+                height: 300px; 
+                object-fit:cover; 
+                object-position: center; 
+                flex-shrink: 0; 
+                scroll-snap-align: start; 
+                transition: transform 0.3s ease;
+            }
+        /*animacion agrandar*/
+            .seccion2_mod img:hover{
+                transform: scale(1.05); 
+                filter: brightness(1.1); 
+            }
+        /*sing_in*/
+            .letras{
+                position: relative;
+                left: 433px;
+                top: 14px;
+            }
+            .bot_Enviar{
+                position: relative;
+                top: -206px;
+                left: 563px;
+                width: 348px;
+                background:#1C1C1C;
+                padding: 18px;
+                border-radius: 8px;
+            }
+            .rellenar{
+                position: relative;
+                top: -277px;
+                left: 430px;
+                width: 520px;
+                background: #1C1C1C;
+                padding: 18px;
+                border-radius: 8px;
+                padding-left: 76px;
+                padding-right: 87px;
+            }
+            .columna1{
+                position: relative;
+                top: 52px;
+                left: 430px;
+                width: 274px;
+                background: #1C1C1C;
+                padding: 18px;
+                border-radius: 8px;
+                height: 264px;
+                padding-top: 0px;
+              
+            }
+            .columna2{
+                position: relative;
+                top: -248px;
+                left: 729px;
+                width: 348px;
+                background: #1C1C1C;
+                padding: 18px;
+                border-radius: 8px;
+                padding-bottom: 30px;
+            }
+
+            .sing_in {
+                margin: 30px;
+                width: 908px;
+                height: 832px;
+            }
+            .sing_in input, textarea {
+                background: #222; 
+                color: #d4af37; 
+                font-family: 'Playfair Display', serif;
+                font-size: 16px;
+                padding: 10px;
+                border: 2px solid #d4af37;
+                border-radius: 8px;
+                outline: none;
+                transition: all 0.3s ease-in-out;
+            }
+            input, textarea {
+                background: #222; 
+                color: #d4af37; 
+                font-family: 'Playfair Display', serif;
+                font-size: 16px;
+                padding: 10px;
+                border: 2px solid #d4af37;
+                border-radius: 8px;
+                outline: none;
+                transition: all 0.3s ease-in-out;
+            }
+            .nom{
+                background: #222; 
+                color: #d4af37; 
+                font-family: 'Playfair Display', serif;
+                font-size: 16px;
+                padding: 10px;
+                border: 2px solid #d4af37;
+                border-radius: 8px;
+                outline: none;
+                transition: all 0.3s ease-in-out;
+                bottom: 12px;
+                position: relative;
+            }
+            
+            
+            .sing_in input::placeholder, 
+            textarea::placeholder {
+                color: rgba(212, 175, 55, 0.6); 
+                font-style: italic;
+            }
+            
+            
+            .sing_in input:focus, 
+            textarea:focus {
+                background: #1a1a1a;
+                border-color: #ffd700;
+                box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            }
+            
+           
+            .sing_in textarea {
+                height: 120px;
+                resize: none; 
+            }
+            
+            .sing_in select {
+                background: #222; 
+                color: #d4af37; 
+                font-family: 'Playfair Display', serif; 
+                font-size: 16px;
+                padding: 10px;
+                border: 2px solid #d4af37;
+                border-radius: 8px;
+                outline: none;
+                cursor: pointer;
+                appearance: none;
+                transition: all 0.3s ease-in-out;
+            }
+            
+            .sing_in select:focus {
+                background: #1a1a1a;
+                border-color: #ffd700;
+                box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            }
+            
+            .sing_in option {
+                background: #222; 
+                color: #d4af37; 
+                font-size: 16px;
+            }
+            
+            
+            .sing_in option:hover {
+                background: #444;
+            }
+

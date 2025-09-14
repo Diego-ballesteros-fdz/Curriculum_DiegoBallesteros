@@ -38,6 +38,16 @@ html,body { height: 100%; margin: 0; padding: 0; background: var(--bg); color: v
   flex-shrink: 0;
 }
 
+
+/*efecto hover para titulos izquierda*/
+h3{
+  color:  rgba(255, 255, 255, 0.92);
+  transition: transform 0.3s ease;
+}
+h3{
+transform: scale(1.05);
+}
+
 /* Inner wrapper para controlar scroll en móvil si fuera necesario */
 .sidebar-inner{
   width: 100%;
@@ -62,7 +72,7 @@ html,body { height: 100%; margin: 0; padding: 0; background: var(--bg); color: v
   display:block;
 }
 
-/* Nombre y subtítulo en el lateral (fiel al PDF: mayúsculas/espaciado) */
+/* Nombre y subtítulo en el lateral*/
 .side-name{
   text-align: center;
   margin: 6px 0 4px;
@@ -81,7 +91,6 @@ html,body { height: 100%; margin: 0; padding: 0; background: var(--bg); color: v
   opacity: 0.95;
 }
 
-/* pequeños caps estilo del PDF */
 .smallcaps { font-variant: small-caps; letter-spacing: 1px; }
 
 /* contacto lateral (listas sin bullets) */
@@ -158,7 +167,14 @@ section h3{
   border-bottom: 2px solid var(--blue);
   display: inline-block;
 }
-
+/*hover para titulos del main*/
+h2{
+  color:  rgba(31,78,121,0.92);
+  transition: transform 0.3s ease;
+}
+h2:hover{
+transform: scale(1.05);
+}
 /* Texto y listas en main */
 .profile p,
 .education p,
@@ -178,9 +194,7 @@ ul { margin: 8px 0 0 18px; }
 .skills-detailed ul { list-style: none; padding: 0; margin: 6px 0 0; }
 .skills-detailed li { margin: 6px 0; font-size: 14px; }
 
-/* ------------------------------
-   Responsive: en móvil la barra lateral pasa arriba
-   ------------------------------ */
+/*Responsive: en móvil la barra lateral pasa arriba */
 @media (max-width: 880px) {
   .cv-frame {
     flex-direction: column;

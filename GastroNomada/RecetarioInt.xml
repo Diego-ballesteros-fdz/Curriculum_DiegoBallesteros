@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="recetario.xsl" type="text/xsl"?>
+
+<!DOCTYPE recetario [
+ <!ELEMENT recetario (receta+)>
+<!ELEMENT receta (nombre, descripcion, ingredientes, pasos, tiempo, dificultad,tradicional)>
+<!ATTLIST receta id ID #REQUIRED>
+
+<!ELEMENT nombre (#PCDATA)>
+<!ELEMENT descripcion (#PCDATA)>
+
+
+<!ELEMENT ingredientes (ingrediente+)>
+<!ELEMENT ingrediente (#PCDATA)>
+<!ATTLIST ingrediente cantidad CDATA #REQUIRED unidad CDATA #IMPLIED>
+
+<!ELEMENT pasos (paso+)>
+<!ELEMENT paso (#PCDATA)>
+<!ATTLIST paso orden CDATA #REQUIRED>
+
+<!ELEMENT tiempo (#PCDATA)>
+<!ELEMENT dificultad (#PCDATA)>
+<!ELEMENT tradicional (#PCDATA)>
+]>
+
+<recetario>
+<!-- receta seria nuestro nodo principal-->
+  <receta id="r1">
+      <nombre>Paella Valenciana</nombre>
+      <descripcion>Plato tradicional de arroz típico de la Comunidad Valenciana.</descripcion>
+      <ingredientes>
+      <!-- he optado por estipular la cantidad y la unidad como atributos obligatorios-->
+        <ingrediente cantidad="400" unidad="g">Arroz</ingrediente>
+        <ingrediente cantidad="800" unidad="ml">Caldo de pollo</ingrediente>
+        <ingrediente cantidad="200" unidad="g">Pollo</ingrediente>
+      </ingredientes>
+      <pasos>
+      <!-- los pasos funcionan mas o menos de la misma forma que los ingredientes, el orden es obligatorio-->
+        <paso orden="1">Sofríe el pollo en una paellera.</paso>
+        <paso orden="2">Añade el arroz y el caldo.</paso>
+        <paso orden="3">Cocina durante 20 minutos.</paso>
+      </pasos>
+      <tiempo>45 minutos</tiempo>
+      <dificultad>Media</dificultad>
+      <tradicional>true</tradicional>
+  </receta>
+  <receta id="r2">
+      <nombre>tortilla de patatas</nombre>
+      <descripcion>Plato tradicional de España, con patata huevo y cebolla</descripcion>
+      <ingredientes>
+        <ingrediente cantidad="500" unidad="g">patata</ingrediente>
+        <ingrediente cantidad="300" unidad="ml">aceite</ingrediente>
+        <ingrediente cantidad="50" unidad="g">cebolla</ingrediente>
+        <ingrediente cantidad="6" unidad="unds">huevo</ingrediente>
+      </ingredientes>
+      <pasos>
+        <paso orden="1">Sofríe las patatas junto a la cebolla</paso>
+        <paso orden="2">bate los huevos y vuelca el sofrito sin aceite.</paso>
+        <paso orden="3">volcar a una sarten muy caliente</paso>
+        <paso orden="4">dar la vuelta y listo</paso>
+      </pasos>
+      <tiempo>60 minutoss</tiempo>
+      <dificultad>Media-baja</dificultad>
+      <tradicional>true</tradicional>
+  </receta>
+</recetario>

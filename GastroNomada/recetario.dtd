@@ -1,0 +1,17 @@
+<!ELEMENT recetario (receta+)>
+<!ELEMENT receta (nombre, descripcion, ingredientes, pasos, tiempo, dificultad)>
+<!ATTLIST receta id ID #REQUIRED>
+
+<!ELEMENT nombre (#PCDATA)>
+<!ELEMENT descripcion (#PCDATA)>
+
+<!ELEMENT ingredientes (ingrediente+)>
+<!ELEMENT ingrediente (#PCDATA)>
+<!ATTLIST ingrediente cantidad CDATA #REQUIRED unidad CDATA #IMPLIED>
+
+<!ELEMENT pasos (paso+)>
+<!ELEMENT paso (#PCDATA)>
+<!ATTLIST paso orden CDATA #REQUIRED>
+
+<!ELEMENT tiempo (#PCDATA)>
+<!ELEMENT dificultad (#PCDATA)>

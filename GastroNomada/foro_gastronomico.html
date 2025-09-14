@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GatroNómada</title>
+    <link rel="stylesheet" href="./estilos.css">
+</head>
+<script>
+   document.addEventListener('DOMContentLoaded', function () {
+  // Función para cerrar todos los desplegables excepto el actual
+  function cerrarOtrosDesplegables(excepto) {
+    const desplegablesActivos = document.querySelectorAll('.active');
+    desplegablesActivos.forEach((desplegable) => {
+      if (desplegable !== excepto) {
+        desplegable.classList.remove('active');
+      }
+    });
+  }
+
+  // Desplegable de países
+  const toggleButtonPaises = document.querySelector('.desplegable_paises');
+  const desplegableContentPaises = document.querySelector('.desplegable_content');
+
+  toggleButtonPaises.addEventListener('click', function () {
+    cerrarOtrosDesplegables(desplegableContentPaises); // Cierra otros desplegables
+    desplegableContentPaises.classList.toggle('active'); // Alterna el actual
+  });
+
+  // Desplegable de recetas
+  const toggleButtonRecetas = document.querySelector('.desplegable_recetas');
+  const desplegableContentRecetas = document.querySelector('.desplegable_cont_recetas');
+
+  toggleButtonRecetas.addEventListener('click', function () {
+    cerrarOtrosDesplegables(desplegableContentRecetas); // Cierra otros desplegables
+    desplegableContentRecetas.classList.toggle('active'); // Alterna el actual
+  });
+
+  // Desplegable de perfil
+  const toggleButtonPerfil = document.querySelector('.bot_perfil');
+  const desplegableContentPerfil = document.querySelector('.desplegable_cont_perfil');
+
+  toggleButtonPerfil.addEventListener('click', function () {
+    cerrarOtrosDesplegables(desplegableContentPerfil); // Cierra otros desplegables
+    desplegableContentPerfil.classList.toggle('active'); // Alterna el actual
+  });
+});
+    
+  </script>
+<body>
+ 
+    <div id="nav">
+        <nav>
+    <a href="./index.html"><img src="./imagenes/logo.png" width="100"></a>
+     
+     <button class="desplegable_paises"><b>Gastronomía del mundo</b></button> 
+     <button class="desplegable_recetas"><b>Recetas</b></button> 
+     
+     <a href="./foro_gastronomico.html"><b>Foro gastronómico</b></a>
+     
+     <a href="./work_in_progress.html"><b>Utensilios y más</b></a>
+     
+     <button class="bot_perfil"><img class="perfil" src="./imagenes/perfil.png"></button>
+     
+        <img class="lupa" src="./imagenes/lupa.png"> 
+    </nav>
+    </div>
+   
+    
+    <div class="desplegable_perfil">
+        <div class="desplegable_cont_perfil">
+            <h1>Inicio de sesión</h1>
+            <form name="inicioSesion" method="post" action="../base_de_datos/gastronomada.php">
+            <br>
+            <label for="usuario">Nombre de usuario o email </label>
+            <br>
+            <input type="text"  spellcheck="false" autofocus required>
+            <br>
+            <label for="contraseña">Contraseña </label>
+            <br>
+            <input type="password" spellcheck="false" autofocus required minlength="11" pattern="[a-z0-9][A-Z]+{11,50}" title="Letras y números, con al menos una mayuscula. Tamaño mínimo: 11, máximo: 50">
+            <br>
+            <label for="mantenerSesion"> </label>
+            <input type="checkbox" name="mantenerSesion" value="check">Mantener sesion abierta</input>
+            <br>
+            ¿No tienes cuenta?<a href="./Log_In/sign_in.html" title="Registrate"><b> pincha aqui</b></a>
+
+            <input type="submit" value="verificar">
+        </div>
+    </div>
+    
+    <div class="desplegable_recetas">
+        <div class="desplegable_cont_recetas">
+                <table>
+                    <caption><h3>Recetas</h3></caption>
+                    <tbody>
+                        <tr>
+                            <td><a href="./Gastronomía_Tradicional/gastronomia_Tradicional.html">Gastronomía tradicional</a></td>
+                            <td><a href="./Recetas_Modernas/Recetas_Modernas.html">Gastronomía moderna</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+        </div>
+    </div>
+    
+    <div class="desplegable">
+        <div class="desplegable_content">
+            <table class="tabla" >
+                <caption> <h3>Gastronomias del mundo</h3></caption>
+                Seleccione un pais
+                <tbody>
+                    <tr>
+                      <td><a href="./Gastronomia_mundo/Española.html"><img src="./imagenes/banderas/españa.png" width="50" height="30" title="España"></a></td>
+                      <td><a href="./work_in_progress.html"><img src="./imagenes/banderas/francia.png" width="50" height="30" title="Francia"></a></td>
+                      <td><a href="./work_in_progress.html"><img src="./imagenes/banderas/italia.png" width="50" title="Italia"></a></td>
+                      <td><a href="./work_in_progress.html"><img src="./imagenes/banderas/alemania.png" height="30" width="50" title="Alemania"></a></td>
+                      <td><a href="./work_in_progress.html"><img src="./imagenes/banderas/japon.png" height="30" width="50" title="Japón"></a></td>
+                      <td><a href="./work_in_progress.html"><img src="./imagenes/banderas/china.png" height="30" width="50" title="China"></a></td>
+                      <td><a href="./work_in_progress.html"><img src="./imagenes/banderas/marruecos.png" height="30" width="50" title="Marruecos"></a></td>
+                      <td><a href="./work_in_progress.html"><img src="./imagenes/banderas/sudáfrica.png" height="30" width="50" title="Sudáfrica"></a></td>
+                      <td><a href="./work_in_progress.html"><img src="./imagenes/banderas/EEUU.png" height="30" width="50" title="EEUU"></a></td>
+                      <td><a href="./work_in_progress.html"><img src="./imagenes/banderas/mexico.png" height="30" width="50" title="Mexico"></a></td>
+                      <td><a href="./work_in_progress.html"><img src="./imagenes/banderas/colombia.png" height="30" width="50" title="Colombia"></a></td>
+                      <td><a href="./work_in_progress.html"><img src="./imagenes/banderas/peru.png" height="30" width="50" title="Perú"></a></td>
+                      <td><a href="./work_in_progress.html"><img src="./imagenes/banderas/ecuador.png" height="30" width="50" title="Ecuador"></a></td>
+                    </tr>
+            </tbody>
+            </table>
+        </div>
+     </div>
+   
+   <article id="art_Foro">
+        <h1>Foro gatronómico</h1>
+        <p>¡Nos alegra tenerte aquí! Este espacio es el lugar perfecto para compartir, debatir y aprender sobre todo lo relacionado con la gastronomía. Dentro de nuestra página de recetas, el foro se convierte en un punto de encuentro para todos los apasionados de la cocina, desde principiantes hasta chefs experimentados.</p>
+        <p>¿Tienes alguna pregunta? ¿Quieres compartir una experiencia o simplemente debatir sobre tu cocina favorita? ¡Este es el lugar!</p>
+        
+          <iframe class="foro_Gast"  src="./Foro.html"></iframe>
+          
+    <div class="responder">
+          <form action="foro.php" method="get">
+            <label class="nombre" for="usuario">Nombre de usuario </label>
+            <br>
+            <input class="nom" type="text"  spellcheck="false" required>
+            <label class="comentario" for="usuario">Escriba comentario </label>
+            <textarea class="EscribirComentario" name="texto" cols="33" rows="5" spellcheck="true">escriba lo que quiera
+            </textarea>
+            <input class="enviar" type="submit" value="Enviar">
+          </form>
+    </div>
+  <img class="fotoChat" src="./imagenes/burbuja-de-dialogo.png">
+     </article> 
+    
+<footer>
+    <div class="footer">
+    <legend>Información de contacto</legend>
+    <p>Redes Sociales</p>
+        <a id="insta" href="https://www.instagram.com/" title="Instagram"><img src="./imagenes/Redes_Sociales/instagram.png" width="20"> </a> 
+        <a id="facebook" href="https://es-es.facebook.com/" title="Faceboock"><img src="./imagenes/Redes_Sociales/facebook_black.png" width="20"> </a>
+        <a id="X" href="https://x.com/?logout=1731672402589" title="X"><img src="./imagenes/Redes_Sociales/gorjeo.png" width="20"> </a>
+</div>
+</footer>
+
+</body>
+</html>
