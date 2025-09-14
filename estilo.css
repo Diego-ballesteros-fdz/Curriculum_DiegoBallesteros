@@ -1,0 +1,209 @@
+:root{
+  --bg: #f4f6f8;
+  --paper: #ffffff;
+  --blue: #1f4e79; /* color base tomado del PDF */
+  --blue-trans: rgba(31,78,121,0.92); /* translúcido para la barra */
+  --text: #222;
+  --muted: #6b7280;
+  --maxw: 1100px;
+  --sidebar-w: 320px;
+}
+
+* { box-sizing: border-box; }
+html,body { height: 100%; margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: "Arial", "Helvetica", sans-serif; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+
+.cv-frame{
+  max-width: var(--maxw);
+  margin: 24px auto;
+  background: var(--paper);
+  display: flex;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(21,32,43,0.10);
+}
+
+/* ------------------------------
+   SIDEBAR (izquierda: rectángulo azul translúcido)
+   ------------------------------ */
+.sidebar{
+  width: var(--sidebar-w);
+  min-width: 240px;
+  background: var(--blue-trans);
+  color: #fff;
+  padding: 28px 22px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* Inner wrapper para controlar scroll en móvil si fuera necesario */
+.sidebar-inner{
+  width: 100%;
+}
+
+/* Foto circular centrada en la barra lateral */
+.photo-wrap{
+  width: 140px;
+  height: 140px;
+  margin: 0 auto 12px auto;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.photo{
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 4px solid rgba(255,255,255,0.15);
+  box-shadow: 0 6px 18px rgba(8,20,35,0.35);
+  display:block;
+}
+
+/* Nombre y subtítulo en el lateral (fiel al PDF: mayúsculas/espaciado) */
+.side-name{
+  text-align: center;
+  margin: 6px 0 4px;
+  font-size: 20px;
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: none;
+  color: #fff;
+}
+.side-role{
+  text-align: center;
+  margin: 0 0 16px;
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0.95;
+}
+
+/* pequeños caps estilo del PDF */
+.smallcaps { font-variant: small-caps; letter-spacing: 1px; }
+
+/* contacto lateral (listas sin bullets) */
+.side-contact ul,
+.side-skills ul{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.side-contact li{
+  margin-bottom: 12px;
+  font-size: 13px;
+  line-height: 1.25;
+}
+.side-contact a{
+  color: #fff;
+  text-decoration: underline;
+  font-weight: 600;
+  word-break: break-all;
+}
+
+/* sección de competencias en la barra */
+.side-skills{
+  margin-top: 18px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding-top: 12px;
+}
+.side-skills h3{
+  margin: 0 0 8px 0;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ------------------------------
+   MAIN (derecha) - contenido principal
+   ------------------------------ */
+.main{
+  flex: 1;
+  padding: 30px 38px;
+  min-width: 0;
+}
+
+/* Header principal (muestra el nombre grande y rol si se desea repetir) */
+.main-header {
+  display:flex;
+  align-items:flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.title-block { }
+.main-name{
+  margin: 0;
+  font-size: 28px;
+  letter-spacing: 1px;
+  color: var(--blue);
+  font-weight: 800;
+}
+.main-role{
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+/* Secciones del contenido con separación y cabecera azul */
+section {
+  margin-top: 22px;
+}
+section h3{
+  margin: 0 0 10px;
+  font-size: 15px;
+  color: var(--blue);
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--blue);
+  display: inline-block;
+}
+
+/* Texto y listas en main */
+.profile p,
+.education p,
+.experience p,
+.skills-detailed p{
+  margin: 10px 0 0;
+  color: #333;
+  line-height: 1.5;
+  font-size: 14px;
+}
+ul { margin: 8px 0 0 18px; }
+.edu-item { margin-top: 12px; }
+.edu-item h4, .exp-item h4 { margin: 0; font-size: 14px; color: #111; font-weight: 700; }
+.edu-degree { margin: 4px 0 6px; font-size: 13px; color: #444; }
+
+/* Skills detalladas como lista simple */
+.skills-detailed ul { list-style: none; padding: 0; margin: 6px 0 0; }
+.skills-detailed li { margin: 6px 0; font-size: 14px; }
+
+/* ------------------------------
+   Responsive: en móvil la barra lateral pasa arriba
+   ------------------------------ */
+@media (max-width: 880px) {
+  .cv-frame {
+    flex-direction: column;
+    margin: 12px;
+  }
+  .sidebar{
+    width: 100%;
+    min-width: 0;
+    padding: 18px;
+    display: block;
+    text-align: center;
+  }
+  .sidebar-inner { display: block; }
+  .main { padding: 18px; }
+  .photo-wrap { margin: 0 auto 10px; }
+  .side-contact li { font-size: 14px; }
+  .main-name { font-size: 22px; }
+  .main-header { align-items:center; }
+}
+
+/* impresión (opcional): quitar sombras / colores fuertes */
+@media print {
+  :root { --blue: #1f4e79; --blue-trans: #1f4e79; }
+  .cv-frame { box-shadow: none; border-radius: 0; }
+  .sidebar { background: var(--blue); color: #fff; }
+}
