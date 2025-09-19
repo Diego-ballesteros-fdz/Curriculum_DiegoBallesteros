@@ -801,3 +801,223 @@
             }
 
             
+/* ========================
+   RESPONSIVE DESIGN
+   ======================== */
+
+/* Pantallas grandes (desktop normal) */
+@media (max-width: 1200px) {
+    #nav a {
+        left: 100px;
+        margin-left: 20px;
+    }
+    #nav .lupa, 
+    #nav .bot_perfil {
+        left: auto;
+        right: 30px;
+    }
+    .desplegable_content,
+    .desplegable_cont_recetas,
+    .desplegable_cont_perfil {
+        min-width: 80%;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    .img_trad, .img_mod {
+        width: 70%;
+        left: 15%;
+    }
+    .tit_trad, .tit_mod {
+        width: 80%;
+        left: 10%;
+        text-align: center;
+    }
+}
+
+/* Tablets horizontales */
+@media (max-width: 992px) {
+    #nav {
+        height: auto;
+        padding: 10px 0;
+    }
+    #nav a,
+    .desplegable_recetas,
+    .desplegable_paises {
+        position: static;
+        display: inline-block;
+        margin: 10px;
+    }
+    #nav img,
+    #nav .lupa,
+    #nav .bot_perfil {
+        position: static;
+        display: inline-block;
+        margin: 10px;
+    }
+    .imagenFondo {
+        max-width: 100%;
+        height: auto;
+    }
+    .seccion img,
+    .seccion2 img,
+    .seccion2_trad img,
+    .seccion2_mod img {
+        height: auto;
+        max-height: 250px;
+    }
+    .img_españa,
+    .titulo_Esp {
+        left: 0;
+        margin: auto;
+        display: block;
+        text-align: center;
+    }
+    #img_receta {
+        position: static;
+        width: 90%;
+        margin: 20px auto;
+        display: block;
+    }
+    .foro_Gast, #art_Foro {
+        position: static;
+        width: 100%;
+        height: auto;
+    }
+    .fotoChat {
+        position: static;
+        width: 100%;
+    }
+    .fotoChat img {
+        width: 100%;
+        top: 0;
+    }
+    .sing_in {
+        width: 100%;
+        height: auto;
+    }
+    .rellenar, .columna1, .columna2, .bot_Enviar {
+        width: 90%;
+        left: 0;
+        margin: 10px auto;
+        top: 0;
+    }
+}
+
+/* Tablets verticales y móviles grandes */
+@media (max-width: 768px) {
+    #nav a {
+        display: block;
+        margin: 5px 0;
+        text-align: center;
+    }
+    .footer a {
+        position: static;
+        display: inline-block;
+        margin: 5px 10px;
+    }
+    .img_trad, .img_mod {
+        width: 90%;
+        left: 5%;
+    }
+    .tit_trad, .tit_mod {
+        width: 90%;
+        left: 5%;
+        text-align: center;
+    }
+    .Des_Recetas {
+        width: 100%;
+        height: auto;
+        padding: 20px;
+    }
+    .receta_ingredientes,
+    .receta_cabecera,
+    .receta_contenido {
+        position: static;
+        margin: 10px 0;
+        text-align: center;
+    }
+}
+
+/* Móviles pequeños */
+@media (max-width: 576px) {
+    #nav {
+        text-align: center;
+    }
+    #nav a {
+        font-size: 16px;
+    }
+    article h1 {
+        font-size: 20px;
+        text-align: center;
+    }
+    article p {
+        font-size: 14px;
+    }
+    .footer {
+        height: auto;
+        padding: 10px;
+        text-align: center;
+    }
+    .footer a {
+        font-size: 14px;
+        margin: 5px;
+    }
+    .seccion img,
+    .seccion2 img,
+    .seccion2_trad img,
+    .seccion2_mod img {
+        max-height: 180px;
+    }
+    .sing_in {
+        margin: 10px;
+    }
+    .rellenar, .columna1, .columna2, .bot_Enviar {
+        font-size: 14px;
+        padding: 10px;
+    }
+}
+/* ========================
+   Ajustes de desplegables
+   ======================== */
+
+/* Tablets y abajo */
+@media (max-width: 992px) {
+  .desplegable_content,
+  .desplegable_cont_recetas,
+  .desplegable_cont_perfil {
+    width: 80%;
+    min-width: unset;        /* anula los min-width fijos */
+    left: 50%;
+    transform: translateX(-50%);
+    max-height: 70vh;        /* no ocupan toda la pantalla */
+    overflow-y: auto;
+    padding: 15px;
+    border-radius: 20px;
+  }
+}
+
+/* Móviles */
+@media (max-width: 576px) {
+  .desplegable_content,
+  .desplegable_cont_recetas,
+  .desplegable_cont_perfil {
+    width: 90%;
+    padding: 10px;
+    font-size: 14px;
+  }
+  .desplegable_cont_perfil h1 {
+    font-size: 18px;
+    text-align: center;
+  }
+  .desplegable_cont_recetas table,
+  .desplegable_content table {
+    width: 100%;
+    font-size: 14px;
+    text-align: center;
+  }
+  .desplegable_content img {
+    margin: 5px auto;
+    max-width: 40px;
+    height: auto;
+  }
+}

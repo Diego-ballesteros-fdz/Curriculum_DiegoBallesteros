@@ -433,11 +433,125 @@
                 left: 40%;
           }
           
+/* Tablets y pantallas medianas */
+@media (max-width: 992px) {
+    #nav {
+        height: auto;
+        padding: 10px;
+    }
+    #nav a {
+        font-size: 16px;
+        left: 0;
+        bottom: 0;
+        margin: 10px;
+        display: inline-block;
+    }
+    #nav img {
+        left: 0;
+        bottom: 0;
+    }
+    #nav .lupa,
+    #nav .bot_perfil {
+        position: static;
+        margin-left: 10px;
+    }
 
-          /*Recetas tradicionales*/
-            /*mosaico de recetas tradicionales*/
+    .desplegable_content,
+    .desplegable_cont_recetas,
+    .desplegable_cont_perfil {
+        min-width: auto;
+        width: 90%;
+        left: 50%;
+        transform: translateX(-50%);
+    }
 
+    .footer {
+        height: auto;
+        padding: 15px;
+        text-align: center;
+    }
+    .footer a {
+        position: static;
+        margin: 10px;
+        display: inline-block;
+    }
 
-          /*Retas modernas*/
-            /* mosaico de recetas modernas*/
+    .imagenFondo {
+        max-width: 100%;
+        height: auto;
+    }
+    .seccion img {
+        height: auto;
+    }
 
+    .seccion2 img,
+    .seccion2 a {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    .foro_Gas {
+        width: 90%;
+        left: 5%;
+    }
+    .fotoChat {
+        position: static;
+        text-align: center;
+        margin-top: 20px;
+    }
+    .fotoChat img {
+        width: 100%;
+        max-width: 356px;
+        height: auto;
+    }
+}
+
+/* Móviles pequeños */
+@media (max-width: 768px) {
+    #nav {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    #nav a,
+    .desplegable_recetas,
+    .desplegable_paises {
+        display: block;
+        margin: 8px 0;
+        left: 0;
+        bottom: 0;
+    }
+
+    #nav .lupa,
+    #nav .bot_perfil {
+        margin-top: 10px;
+    }
+
+    article h1, article p {
+        margin: 10px;
+        font-size: 16px;
+    }
+
+    .img_españa, .titulo_Esp {
+        left: 0;
+        margin: auto;
+        text-align: center;
+    }
+
+    .responder,
+    .nombre,
+    .comentario,
+    .EscribirComentario,
+    .enviar {
+        position: static;
+        margin: 10px auto;
+        display: block;
+        text-align: center;
+    }
+
+    .foro_Gas {
+        width: 100%;
+        left: 0;
+    }
+}
