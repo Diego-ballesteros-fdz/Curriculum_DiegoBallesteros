@@ -141,7 +141,6 @@ transform: scale(1.05);
   justify-content: space-between;
   gap: 16px;
 }
-.title-block { }
 .main-name{
   margin: 0;
   font-size: 28px;
@@ -215,6 +214,14 @@ ul { margin: 8px 0 0 18px; }
   .main-header { align-items:center; }
 }
 
+ video {
+      width: 80%;  
+      max-width: 700px;
+      border-radius: 12px;
+      box-shadow: 0px 4px 12px rgba(0,0,0,0.3);
+      display: block;
+      margin: 20px auto;
+    }
 /* impresión (opcional): quitar sombras / colores fuertes */
 @media print {
   :root { --blue: #1f4e79; --blue-trans: #1f4e79; }
