@@ -1,0 +1,30 @@
+# dependencies
+**/node_modules
+
+# next.js
+**/.next
+**/out
+**/build
+
+# turborepo
+**/.turbo
+
+# misc
+**/.DS_Store
+**/*.pem
+
+# debug
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+
+# env files
+**/.env
+**/.env*.local
+
+# claude code (ajustes locales por máquina)
+**/.claude/settings.local.json
+
+# typescript
+**/*.tsbuildinfo
+**/next-env.d.ts

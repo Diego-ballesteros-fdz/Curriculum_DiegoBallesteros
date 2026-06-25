@@ -1,0 +1,21 @@
+{
+  "name": "dev-portfolio",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "npm@10.8.2",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "start": "turbo run start",
+    "dev:portfolio": "turbo run dev --filter=portfolio",
+    "dev:gastronomada": "turbo run dev --filter=gastronomada"
+  },
+  "devDependencies": {
+    "turbo": "^2"
+  }
+}
