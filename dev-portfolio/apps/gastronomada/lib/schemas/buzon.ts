@@ -27,13 +27,25 @@ export const mensajeChatSchema = z.object({
 
 export type MensajeChat = z.infer<typeof mensajeChatSchema>;
 
-/** Conversación con otro usuario. `usuario` (handle) hace de id y de slug de ruta. */
+/** Hilo completo con otro usuario (detalle bajo demanda). `usuario` (handle) hace
+ *  de id y de slug de ruta. */
 export const conversacionSchema = z.object({
   usuario: z.string(),
   mensajes: z.array(mensajeChatSchema),
 });
 
 export type Conversacion = z.infer<typeof conversacionSchema>;
+
+/** Resumen de un hilo para la LISTA del buzón: último mensaje (vista previa) y
+ *  nº de mensajes recibidos sin leer. El historial completo se carga al abrir la
+ *  conversación (`conversacionSchema`), no aquí. */
+export const conversacionResumenSchema = z.object({
+  usuario: z.string(),
+  ultimoMensaje: mensajeChatSchema.nullable(),
+  noLeidos: z.number().int(),
+});
+
+export type ConversacionResumen = z.infer<typeof conversacionResumenSchema>;
 
 /** Tipo de notificación: `mention` (foro), `dm` (mensaje directo), `sistema`. */
 export const tipoNotificacionSchema = z.enum(["mention", "dm", "sistema"]);
@@ -54,9 +66,10 @@ export const notificacionSchema = z.object({
 
 export type Notificacion = z.infer<typeof notificacionSchema>;
 
-/** Snapshot inicial servido por REST al cargar el buzón. */
+/** Snapshot inicial servido por REST al cargar el buzón: SOLO la lista de
+ *  conversaciones (resúmenes) + notificaciones. El historial es bajo demanda. */
 export const buzonSnapshotSchema = z.object({
-  conversaciones: z.array(conversacionSchema),
+  conversaciones: z.array(conversacionResumenSchema),
   notificaciones: z.array(notificacionSchema),
 });
 

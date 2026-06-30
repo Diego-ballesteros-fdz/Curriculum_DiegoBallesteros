@@ -5,8 +5,16 @@ import type { WSManager } from '@/modules/ws/ws.manager.js';
 import { dmRoom } from '@/modules/ws/ws.types.js';
 import { HttpError } from '@/utils/http.error.js';
 
-import type { ConversacionRepository, HiloConMensajes } from './buzon.repository.js';
-import type { ConversacionDTO, MensajeChatDTO } from './buzon.schema.js';
+import type {
+  ConversacionRepository,
+  HiloConMensajes,
+  ResumenHilo,
+} from './buzon.repository.js';
+import type {
+  ConversacionDTO,
+  ConversacionResumenDTO,
+  MensajeChatDTO,
+} from './buzon.schema.js';
 
 // El buzón es siempre personal: se filtra por el `userId` de la sesión (no
 // aplica el scope GLOBAL del admin, que no tendría sentido para una bandeja).
@@ -34,11 +42,21 @@ export class BuzonService {
     };
   }
 
-  // Conversaciones del usuario (el snapshot completo lo compone el controlador,
-  // que añade las notificaciones del módulo `notification`).
-  async listarConversaciones(userId: string): Promise<ConversacionDTO[]> {
-    const threads = await this.repository.findThreads(userId);
-    return threads.map((t) => this.toConversacion(t));
+  private toResumen(hilo: ResumenHilo): ConversacionResumenDTO {
+    const ultimo = hilo.mensajes[0];
+    return {
+      usuario: hilo.usuario,
+      ultimoMensaje: ultimo ? this.toMensajeChat(ultimo) : null,
+      noLeidos: hilo.noLeidos,
+    };
+  }
+
+  // Lista de conversaciones del usuario (resúmenes para el buzón; el historial
+  // de cada hilo se carga aparte). El snapshot completo lo compone el controlador,
+  // que añade las notificaciones del módulo `notification`.
+  async listarConversaciones(userId: string): Promise<ConversacionResumenDTO[]> {
+    const resumenes = await this.repository.findThreadSummaries(userId);
+    return resumenes.map((r) => this.toResumen(r));
   }
 
   // Devuelve el hilo o uno vacío si aún no existe (permite iniciar conversación).

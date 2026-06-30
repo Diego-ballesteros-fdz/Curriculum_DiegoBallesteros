@@ -62,7 +62,7 @@ export default function Buzon() {
     marcarTodoLeido();
     marcarTodasNotificacionesLeidasApi().catch(() => {});
     for (const c of conversaciones) {
-      if (c.mensajes.some((m) => !m.leido && !m.propio)) {
+      if (c.noLeidos > 0) {
         marcarHiloLeido(c.usuario).catch(() => {});
       }
     }
@@ -125,7 +125,10 @@ export default function Buzon() {
           ) : (
             conversaciones.map((c) => {
               const ultimo = c.mensajes[c.mensajes.length - 1];
-              const noLeidos = c.mensajes.filter((m) => !m.leido && !m.propio).length;
+              // Un hilo en la lista siempre trae su último mensaje; si por algún
+              // motivo no lo tuviera, lo omitimos (no hay vista previa que mostrar).
+              if (!ultimo) return null;
+              const noLeidos = c.noLeidos;
               return (
                 <Link
                   key={c.usuario}

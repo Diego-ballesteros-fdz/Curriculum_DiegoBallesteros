@@ -21,14 +21,26 @@ export const mensajeChatSchema = z.object({
   leido: z.boolean(),
 });
 
+// Hilo completo de una conversación (detalle bajo demanda: `GET /:usuario`).
 export const conversacionSchema = z.object({
   usuario: z.string(),
   mensajes: z.array(mensajeChatSchema),
 });
 
-// Snapshot inicial servido por REST al cargar el buzón.
+// Resumen de un hilo para la LISTA del buzón: último mensaje (vista previa) y
+// nº de mensajes recibidos sin leer. NO incluye el historial completo: este se
+// carga al abrir la conversación. El backend devuelve la lista ya ordenada por
+// último mensaje (más reciente primero).
+export const conversacionResumenSchema = z.object({
+  usuario: z.string(),
+  ultimoMensaje: mensajeChatSchema.nullable(),
+  noLeidos: z.number().int(),
+});
+
+// Snapshot inicial servido por REST al cargar el buzón: SOLO la lista de
+// conversaciones (resúmenes) + notificaciones. El historial es bajo demanda.
 export const buzonSnapshotSchema = z.object({
-  conversaciones: z.array(conversacionSchema),
+  conversaciones: z.array(conversacionResumenSchema),
   notificaciones: z.array(notificationSchema),
 });
 
@@ -46,5 +58,6 @@ export const marcarLeidoRespuestaSchema = z.object({ count: z.number().int() });
 
 export type MensajeChatDTO = z.infer<typeof mensajeChatSchema>;
 export type ConversacionDTO = z.infer<typeof conversacionSchema>;
+export type ConversacionResumenDTO = z.infer<typeof conversacionResumenSchema>;
 export type BuzonSnapshotDTO = z.infer<typeof buzonSnapshotSchema>;
 export type EnviarMensajeInput = z.infer<typeof enviarMensajeSchema>;

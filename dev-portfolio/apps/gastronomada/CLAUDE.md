@@ -52,11 +52,11 @@ requests (no CORS) and SSR/middleware can read it. Two HTTP paths:
 
 ## Auth model (defense in depth)
 
-1. **`middleware.ts`** — *optimistic* Edge filter. Only checks for the **presence** of
+1. **`middleware.ts`** — _optimistic_ Edge filter. Only checks for the **presence** of
    the session cookie (`AUTH_SESSION_COOKIE` in `lib/auth/config.ts`); redirects
    no-cookie users to `/pages/login` and logged-in users away from auth pages.
    Public/auth route lists live in `lib/auth/config.ts`.
-2. **`lib/auth/session.ts` `getSession()`** — *authoritative* server check. Forwards the
+2. **`lib/auth/session.ts` `getSession()`** — _authoritative_ server check. Forwards the
    request cookies to the backend's `get-session`; fail-closed on error. Called in
    `app/layout.tsx` and used as the real guard.
 3. The resolved `SessionUser` is injected into a client context by
@@ -136,100 +136,174 @@ Auth: `/pages/login`, `/pages/registro`, `/pages/recuperar-contrasena`,
 
 ---
 
-## Tarea actual
+## Tarea actual — Preparar para Vercel
 
-### 1 — Permisos de recetas
+### Contexto del despliegue
 
-**Regla:** cualquier usuario autenticado puede ver todas las recetas (sin distinción de rol). Solo el autor puede editarlas o eliminarlas.
-
-#### Backend (`modules/receta/`)
-- `GET /api/recetas` y `GET /api/recetas/:id` → `requireAuth`, sin restricción de rol
-- `PATCH /api/recetas/:id` y `DELETE /api/recetas/:id` → verificar `receta.autorId === session.userId`; si no coincide → `403 Forbidden`
-- Los admin **no** tienen permisos especiales sobre recetas ajenas
-
-#### Frontend
-- `useRecetas` no bloquea la llamada si el usuario no tiene un rol concreto; solo requiere sesión activa (ya garantizado por `middleware.ts`)
+- **Monorepo**: npm workspaces + Turborepo
+- **Apps a desplegar**:
+  - `apps/portfolio` → Vercel project #1 (home / landing)
+  - `apps/gastronomada` → Vercel project #2
+- **Backend**: Fastify en local (`http://localhost:4000`). En producción apuntará a una URL real — por ahora es un placeholder documentado en `.env.example`.
+- **Rama de producción**: `production`, creada desde `main`. Vercel desplegará automáticamente desde ella en ambos proyectos.
 
 ---
 
-### 2 — Mensajes privados: solo los participantes pueden leer la conversación
+### Paso 1 — Buzón alimentado desde el back
 
-**Regla:** una conversación entre X e Y es invisible para Z aunque esté autenticado.
+El buzón no debe almacenar conversaciones en el front más allá del store en memoria. La fuente de verdad es el backend.
 
-#### Backend (`modules/buzon/`)
-- `GET /api/buzon` → devolver solo conversaciones donde `session.userId` es participante
-- `GET /api/buzon/:conversacionId/mensajes` → verificar participación antes de devolver datos; si no → `403 Forbidden`
-- `PATCH /api/buzon/:conversacionId/read` → ídem
-- Handler WS `dm.handler.ts` → validar que el socket autenticado es participante antes de permitir `dm:join`; si no → cerrar con `4003 Forbidden`
+#### Comportamiento esperado
 
----
+- Al entrar en `/pages/buzon` → llamar a `GET /api/buzon` para obtener la lista de conversaciones
+- Las conversaciones se ordenan por `ultimoMensajeAt` descendente (último mensaje recibido primero) — el **backend debe devolver el listado ya ordenado**; si no lo hace, añadir `ORDER BY ultimoMensajeAt DESC` en `buzon.repository.ts`
+- El store `buzon-store.ts` se limpia y rehidrata en cada montaje de `/pages/buzon` (`hidratar` llama al API, no lee caché local)
+- Los mensajes de una conversación concreta se cargan al abrir `/pages/buzon/[usuario]` → `GET /api/buzon/:conversacionId/mensajes` — no se precarga el historial completo en el store
+- WS sigue aplicando actualizaciones incrementales encima de la hidratación REST (`agregarMensaje`), con dedup por id
 
-### 3 — Página de países: vista única con selector
+#### Lo que NO debe ocurrir
 
-**Objetivo:** reemplazar las rutas de país individuales por `/pages/gastronomia-mundo` con un dropdown para filtrar. Las banderas del nav siguen funcionando apuntando a esta misma página con el país preseleccionado.
-
-#### Cambios de rutas
-- Eliminar subcarpetas de país bajo `gastronomia-mundo/` (ej: `/espana`)
-- Nueva ruta canónica: `/pages/gastronomia-mundo?pais=<slug>`
-- Las banderas en `Nav.tsx` pasan de `href="/pages/gastronomia-mundo/espana"` a `href="/pages/gastronomia-mundo?pais=espana"`
-- Eliminar `/pages/en-construccion` — estado vacío en la página única cuando no hay recetas para el país
-
-#### Página `/pages/gastronomia-mundo`
-- Leer `?pais=` del query param al montar con `useSearchParams()`
-- Dropdown con la lista de países del array `PAISES` (misma fuente de verdad que el nav)
-- Al cambiar el selector → `router.replace` actualizando `?pais=` + rellamar `useRecetas({ pais })`
-- Estado vacío explícito cuando no hay recetas para el país seleccionado
-- Sin recarga de página al cambiar país
+- No guardar conversaciones en `localStorage` ni en ningún estado persistente del cliente
+- No cargar todas las conversaciones de todos los hilos al iniciar la app — solo la lista, y el detalle bajo demanda
 
 ---
 
-### 4 — Eliminar la pantalla de utensilios y más
+### Paso 2 — Crear rama `production` en GitHub
 
-- Localizar y eliminar la ruta, el componente y cualquier enlace en `Nav.tsx` o `Footer.tsx` que apunte a la pantalla de utensilios
-- Limpiar imports huérfanos tras la eliminación
-- Verificar que `npm run build` no rompe
+```bash
+git checkout main
+git pull origin main
+git checkout -b production
+git push origin production
+```
 
----
-
-### 5 — Mejoras de navegación en `Nav.tsx`
-
-| Problema | Solución |
-|---|---|
-| El menú no se cierra al hacer clic fuera | `useEffect` con listener `mousedown` en `document`; usar `useRef` en el contenedor del nav para comparar; `setActiveMenu(null)` si el clic es exterior. Limpiar el listener en el `return` |
-| El hover de la barra desaparece al abrir menú | Aplicar clase activa explícita (`aria-current` o clase CSS) al ítem cuyo menú está abierto, independientemente del `:hover` CSS |
-| Cursor inconsistente entre secciones | `cursor-pointer` en todos los ítems clicables del nav |
-| La lupa aparece en la barra | Eliminar el elemento lupa y su handler del JSX y del CSS |
+Sin cambios de código en este paso — solo crear la rama base desde la que Vercel desplegará.
 
 ---
 
-### 6 — Nav responsive: menú hamburguesa en móvil
+### Paso 3 — Variables de entorno
 
-**Objetivo:** en `< 768px` el nav colapsa en un botón hamburguesa.
+Recorrer `apps/portfolio` y `apps/gastronomada` buscando todos los `process.env.*` usados. Crear un `.env.example` documentado en cada app (nunca subir `.env.local` ni `.env.production.local` al repositorio).
 
-- Desktop (`≥ 768px`): comportamiento actual sin cambios
-- Móvil: barra superior con logo + botón hamburguesa (☰ abierto / ✕ cerrado)
-- Al pulsar → panel vertical con los mismos ítems expandibles individualmente
-- La selección de bandera en móvil navega y cierra el panel
-- El panel se cierra también al hacer clic fuera (mismo listener del punto 5)
-- Estado `menuAbierto` con `useState` local (es visual, no va al store)
-- Clases responsive de Tailwind (`hidden md:flex`, `flex md:hidden`); sin librerías externas
-- Accesibilidad: `aria-expanded` y `aria-label="Abrir menú"` en el botón hamburguesa
+**`apps/gastronomada/.env.example`**
+
+```dotenv
+# URL del backend — reemplazar por la URL real cuando el back esté desplegado
+BACKEND_URL=http://localhost:4000
+
+# URL del portfolio (back-link en Footer)
+NEXT_PUBLIC_PORTFOLIO_URL=https://<tu-dominio-portfolio>.vercel.app
+```
+
+**`apps/portfolio/.env.example`**
+
+```dotenv
+# URL de gastronomada (para enlazar desde el portfolio)
+NEXT_PUBLIC_GASTRONOMADA_URL=https://<tu-dominio-gastronomada>.vercel.app
+```
 
 ---
 
-### Orden de ejecución
+### Paso 4 — `next.config.ts` de gastronomada
 
-1. **Back**: ajustar permisos en `receta.routes.ts` (lectura pública auth, escritura solo autor)
-2. **Back**: blindar `buzon` con verificación de participante en lectura, WS join y mark-as-read
-3. **Front**: eliminar pantalla de utensilios y limpiar referencias
-4. **Front**: mejoras de `Nav.tsx` (click outside, hover activo, cursor, eliminar lupa)
-5. **Front**: hamburguesa responsive en `Nav.tsx`
-6. **Front**: página única `/pages/gastronomia-mundo?pais=` + actualizar enlaces de banderas en nav
+Verificar que la reescritura no tiene URLs hardcodeadas y que el build no rompe si `BACKEND_URL` no está definido:
+
+```ts
+const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:4000";
+```
+
+---
+
+### Paso 5 — Comportamiento graceful sin backend
+
+Las páginas con fetch en servidor (SSR / Server Components) no deben romper el build ni mostrar pantalla en blanco si el backend no responde:
+
+- Envolver llamadas en `try/catch` → estado vacío o skeleton si falla, nunca error no capturado
+- Los hooks de cliente (`useRecetas`, `useUsuario`, etc.) ya tienen `isLoading` / `error` — verificar que el estado `error` muestra mensaje amable, no un crash
+
+---
+
+### Paso 6 — `vercel.json` por app
+
+**`apps/portfolio/vercel.json`**
+
+```json
+{ "framework": "nextjs" }
+```
+
+**`apps/gastronomada/vercel.json`**
+
+```json
+{ "framework": "nextjs" }
+```
+
+---
+
+### Paso 7 — Verificar builds locales
+
+```bash
+# Desde la raíz del monorepo
+npm run build
+npm run lint
+```
+
+Corregir cualquier error de TypeScript o ESLint que bloquee el build antes de hacer push.
+
+---
+
+### Paso 8 — Push a `production`
+
+```bash
+git add .
+git commit -m "chore: prepare frontend for Vercel deployment"
+git push origin production
+```
+
+---
+
+### Paso 9 — Instrucciones para Vercel (el agente las imprime al acabar)
+
+Al completar todos los pasos anteriores, el agente debe entregar al usuario las siguientes instrucciones:
+
+---
+
+#### Instrucciones para levantar en Vercel
+
+**Proyecto 1 — Portfolio**
+
+1. [vercel.com](https://vercel.com) → "Add New Project" → importar el repositorio de GitHub
+2. **Root Directory** → `apps/portfolio`
+3. Framework: Next.js (autodetectado)
+4. **Environment Variables**:
+   - `NEXT_PUBLIC_GASTRONOMADA_URL` = `https://<dominio-gastronomada>.vercel.app` _(añadir tras desplegar gastronomada)_
+5. **Production Branch**: `production`
+6. Deploy
+
+**Proyecto 2 — GastroNómada**
+
+1. "Add New Project" → mismo repositorio
+2. **Root Directory** → `apps/gastronomada`
+3. Framework: Next.js
+4. **Environment Variables**:
+   - `BACKEND_URL` = `http://localhost:4000` _(placeholder — actualizar cuando el back esté en producción)_
+   - `NEXT_PUBLIC_PORTFOLIO_URL` = `https://<dominio-portfolio>.vercel.app`
+5. **Production Branch**: `production`
+6. Deploy
+
+**Notas**
+
+- Cada push a `production` dispara un deploy automático en ambos proyectos
+- `main` sigue siendo la rama de desarrollo; promover cambios con PR `main` → `production`
+- Cuando el backend esté desplegado, actualizar `BACKEND_URL` en Settings → Environment Variables del proyecto gastronomada en Vercel (redeploy automático)
 
 ---
 
 ### Restricciones
 
+- No subir `.env.local`, `.env.production.local` ni ningún archivo con secretos al repositorio
+- No hardcodear URLs de backend en el código — siempre via variable de entorno
+- El build debe pasar en frío (sin backend corriendo) — fallos de red son warnings de runtime, no errores de build
+- La rama `production` es sagrada: solo recibe merges desde `main` una vez que el build local pasa
 - La información que verás es confidencial — no utilizarla para entrenar modelos ni compartir
 - Zustand solo para estado no visual compartido entre vistas; estado visual con `useState`
 - `wsManager` stateless respecto a Prisma — los handlers WS delegan en services
