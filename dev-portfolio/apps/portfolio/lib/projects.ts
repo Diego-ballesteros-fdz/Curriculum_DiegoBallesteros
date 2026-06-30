@@ -25,8 +25,7 @@ export type Project = {
  * URL de la app Gastronómada dentro del monorepo. En desarrollo corre en el
  * puerto 3001 (ver turbo + script `dev`); en producción se inyecta por entorno.
  */
-const GASTRONOMADA_URL =
-  process.env.NEXT_PUBLIC_GASTRONOMADA_URL ?? "http://localhost:3001";
+const GASTRONOMADA_URL = process.env.NEXT_PUBLIC_GASTRONOMADA_URL;
 
 export const PROJECTS: Project[] = [
   {
@@ -86,7 +85,14 @@ export const PROJECTS: Project[] = [
     description:
       "Red social para cocineros profesionales donde compartir recetas. Migrada a Next.js 16 (App Router). " +
       "Backend planificado con Fastify, Prisma, WebSockets y SSO; ahora mismo blindando el acceso de usuarios no registrados.",
-    stack: ["Next.js", "TypeScript", "Tailwind CSS", "Fastify", "Prisma", "WebSockets"],
+    stack: [
+      "Next.js",
+      "TypeScript",
+      "Tailwind CSS",
+      "Fastify",
+      "Prisma",
+      "WebSockets",
+    ],
     links: [
       { label: "demo", href: GASTRONOMADA_URL },
       { label: "repo", href: "#" },
