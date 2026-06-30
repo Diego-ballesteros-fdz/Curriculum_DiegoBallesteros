@@ -3,7 +3,8 @@
  * puerto 3000; en producción se inyecta por entorno.
  */
 const PORTFOLIO_URL =
-  process.env.NEXT_PUBLIC_PORTFOLIO_URL ?? "http://localhost:3000";
+  process.env.NEXT_PUBLIC_PORTFOLIO_URL ??
+  "https://portfolio-diego-ballesteros-lm6u64d8j.vercel.app/";
 
 export default function Footer() {
   return (
