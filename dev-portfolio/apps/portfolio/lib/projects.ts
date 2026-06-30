@@ -51,7 +51,7 @@ export const PROJECTS: Project[] = [
     ],
     links: [
       { label: "demo", href: "#" },
-      { label: "repo", href: "#" },
+      { label: "repo", href: "https://github.com/AWSDashboard" },
     ],
   },
   {
