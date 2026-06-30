@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import type { Auth } from 'better-auth';
 
 import type { RateLimitTiers } from '@/plugins/02.security.js';
+import type { WSManager } from '@/modules/ws/ws.manager.js';
 
 type BetterAuthInstance = Auth;
 
@@ -36,6 +37,7 @@ declare module 'fastify' {
     prisma: PrismaClient;
     rateLimitTiers: RateLimitTiers;
     auth: BetterAuthInstance;
+    wsManager: WSManager;
   }
 
   interface FastifyRequest {

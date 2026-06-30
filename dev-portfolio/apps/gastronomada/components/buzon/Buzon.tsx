@@ -1,19 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import {
-  Bell,
-  CheckCheck,
-  Heart,
-  MessageSquare,
-  UserPlus,
-  Info,
-  Plus,
-} from "lucide-react";
+import { AtSign, Bell, CheckCheck, Info, MessageSquare } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { formatFecha } from "@/lib/format";
+import { getBuzonSnapshot, marcarHiloLeido } from "@/lib/api/buzon";
+import {
+  marcarNotificacionLeidaApi,
+  marcarTodasNotificacionesLeidasApi,
+} from "@/lib/api/notifications";
+import NuevaConversacion from "@/components/buzon/NuevaConversacion";
 import type { TipoNotificacion } from "@/lib/schemas/buzon";
 import {
   selectMensajesNoLeidos,
@@ -24,9 +22,8 @@ import {
 type Tab = "mensajes" | "notificaciones";
 
 const ICONO_NOTIFICACION: Record<TipoNotificacion, typeof Bell> = {
-  seguidor: UserPlus,
-  comentario: MessageSquare,
-  like: Heart,
+  mention: AtSign,
+  dm: MessageSquare,
   sistema: Info,
 };
 
@@ -39,34 +36,41 @@ export default function Buzon() {
   const conectado = useBuzonStore((s) => s.conectado);
   const marcarNotificacionLeida = useBuzonStore((s) => s.marcarNotificacionLeida);
   const marcarTodoLeido = useBuzonStore((s) => s.marcarTodoLeido);
-  const recibirMensaje = useBuzonStore((s) => s.recibirMensaje);
-  const recibirNotificacion = useBuzonStore((s) => s.recibirNotificacion);
+  const hidratar = useBuzonStore((s) => s.hidratar);
 
   const mensajesNoLeidos = useBuzonStore(selectMensajesNoLeidos);
   const notifsNoLeidas = useBuzonStore(selectNotificacionesNoLeidas);
 
-  /**
-   * Demo: simula un frame entrante del WebSocket disparando las mismas acciones
-   * del store que usará `conectarBuzon` (ver lib/realtime/buzon-socket.ts). En
-   * "mensajes" llega de "carmen": crea su conversación y, con la ruta dinámica,
-   * su página.
-   */
-  function simularEntrante() {
-    if (tab === "mensajes") {
-      recibirMensaje("carmen", {
-        id: crypto.randomUUID(),
-        texto: "¡Hola! Soy Carmen, ¿me pasas la receta del bao de cangrejo?",
-        fecha: new Date().toISOString(),
+  // Carga el snapshot del buzón (conversaciones + notificaciones) desde el backend.
+  useEffect(() => {
+    let activo = true;
+    getBuzonSnapshot()
+      .then((snapshot) => {
+        if (activo) hidratar(snapshot);
+      })
+      .catch(() => {
+        // Sin snapshot: el buzón se muestra vacío (el badge no sumará).
       });
-    } else {
-      recibirNotificacion({
-        id: crypto.randomUUID(),
-        tipo: "like",
-        texto: "A alguien le ha gustado una de tus recetas.",
-        fecha: new Date().toISOString(),
-        leido: false,
-      });
+    return () => {
+      activo = false;
+    };
+  }, [hidratar]);
+
+  // Marca todo como leído en el store y lo persiste en el backend (best-effort):
+  // todas las notificaciones + cada conversación con mensajes recibidos sin leer.
+  function onMarcarTodo() {
+    marcarTodoLeido();
+    marcarTodasNotificacionesLeidasApi().catch(() => {});
+    for (const c of conversaciones) {
+      if (c.mensajes.some((m) => !m.leido && !m.propio)) {
+        marcarHiloLeido(c.usuario).catch(() => {});
+      }
     }
+  }
+
+  function onNotificacionClick(id: string) {
+    marcarNotificacionLeida(id);
+    marcarNotificacionLeidaApi(id).catch(() => {});
   }
 
   return (
@@ -84,14 +88,17 @@ export default function Buzon() {
             {conectado ? "Conectado en vivo" : "Sin conexión en vivo"}
           </p>
         </div>
-        <button
-          type="button"
-          onClick={marcarTodoLeido}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-surface px-3 py-2 text-xs font-semibold text-surface-fg shadow-sm transition-colors hover:bg-surface-2"
-        >
-          <CheckCheck className="size-4" />
-          Marcar todo como leído
-        </button>
+        <div className="flex items-center gap-2">
+          <NuevaConversacion />
+          <button
+            type="button"
+            onClick={onMarcarTodo}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-surface px-3 py-2 text-xs font-semibold text-surface-fg shadow-sm transition-colors hover:bg-surface-2"
+          >
+            <CheckCheck className="size-4" />
+            Marcar todo como leído
+          </button>
+        </div>
       </header>
 
       {/* Pestañas */}
@@ -118,7 +125,7 @@ export default function Buzon() {
           ) : (
             conversaciones.map((c) => {
               const ultimo = c.mensajes[c.mensajes.length - 1];
-              const noLeidos = c.mensajes.filter((m) => !m.leido).length;
+              const noLeidos = c.mensajes.filter((m) => !m.leido && !m.propio).length;
               return (
                 <Link
                   key={c.usuario}
@@ -170,12 +177,12 @@ export default function Buzon() {
             <Vacio texto="No tienes notificaciones." />
           ) : (
             notificaciones.map((n) => {
-              const Icono = ICONO_NOTIFICACION[n.tipo];
+              const Icono = ICONO_NOTIFICACION[n.type];
               return (
                 <button
                   key={n.id}
                   type="button"
-                  onClick={() => marcarNotificacionLeida(n.id)}
+                  onClick={() => onNotificacionClick(n.id)}
                   className={cn(
                     "flex w-full gap-3 rounded-xl border-l-4 p-4 text-left shadow-sm transition-colors",
                     n.leido
@@ -209,16 +216,6 @@ export default function Buzon() {
             })
           ))}
       </section>
-
-      {/* Demo de tiempo real (provisional hasta el WebSocket). */}
-      <button
-        type="button"
-        onClick={simularEntrante}
-        className="mt-6 inline-flex items-center gap-1.5 text-xs font-medium text-app-fg-muted transition-colors hover:text-brand"
-      >
-        <Plus className="size-4" />
-        Simular {tab === "mensajes" ? "mensaje" : "notificación"} entrante
-      </button>
     </main>
   );
 }

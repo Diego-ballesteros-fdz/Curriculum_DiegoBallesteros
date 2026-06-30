@@ -45,10 +45,7 @@ export default function Home() {
           Además, en nuestra <b>Zona de Blog y Foro de Debate</b>, podrás
           conectar con otros amantes de la gastronomía, compartir tus propias
           experiencias y aprender de una comunidad vibrante de chefs caseros y
-          profesionales. Y para completar tu experiencia, la{" "}
-          <b>Zona de Utensilios</b> te presenta una selección de herramientas y
-          gadgets culinarios esenciales para hacer cada preparación más fácil y
-          divertida.
+          profesionales.
         </p>
         <p>
           Únete a Gastronómada y déjate inspirar por el sabor de cada rincón del

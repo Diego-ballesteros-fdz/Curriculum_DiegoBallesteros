@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 
 import ForoMensajes from "@/components/foro/ForoMensajes";
-import { getMensajesForo } from "@/lib/data/foro";
+import { getSession } from "@/lib/auth/session";
 
 export const metadata: Metadata = {
   title: "GastroNómada — Foro gastronómico",
 };
 
 export default async function Foro() {
-  const mensajes = await getMensajesForo();
+  // Publicar requiere sesión; el autor del comentario es el usuario autenticado.
+  const session = await getSession();
+  if (!session) redirect("/pages/login?redirect=/pages/foro");
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-10">
@@ -22,7 +25,7 @@ export default async function Foro() {
         </p>
       </header>
 
-      <ForoMensajes initial={mensajes} />
+      <ForoMensajes autor={session.user.name} />
     </main>
   );
 }

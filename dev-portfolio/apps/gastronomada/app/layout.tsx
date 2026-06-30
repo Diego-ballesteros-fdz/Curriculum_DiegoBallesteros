@@ -6,6 +6,7 @@ import "./globals.css";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { SessionProvider } from "@/components/auth/SessionProvider";
+import RealtimeProvider from "@/components/realtime/RealtimeProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { getSession } from "@/lib/auth/session";
 import { THEME_COOKIE } from "@/lib/auth/config";
@@ -33,6 +34,7 @@ export default async function RootLayout({
       <body className="flex min-h-screen flex-col bg-app-bg text-app-fg">
         <ThemeProvider inicial={tema}>
           <SessionProvider user={session?.user ?? null}>
+            <RealtimeProvider />
             <Nav />
             <div className="flex flex-1 flex-col">{children}</div>
             <Footer />

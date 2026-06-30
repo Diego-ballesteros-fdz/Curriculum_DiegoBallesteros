@@ -1,23 +1,37 @@
 /** Países disponibles en el menú "Gastronomía del mundo".
- *  Añadir un país = añadir una entrada aquí. */
+ *  Fuente de verdad única para el nav (banderas) y la página única
+ *  `/pages/gastronomia-mundo?pais=<slug>`. Añadir un país = añadir una entrada.
+ *
+ *  - `slug`   → valor del query param `?pais=` (URL-safe, sin acentos).
+ *  - `nombre` → texto mostrado Y valor con el que se filtran las recetas: debe
+ *               coincidir con el campo `pais` guardado en cada receta
+ *               (`PAISES_RECETA` en `lib/schemas/receta.ts`).
+ *  - `src`    → imagen de la bandera. */
 export interface Pais {
-  href: string;
+  slug: string;
+  nombre: string;
   src: string;
-  title: string;
 }
 
 export const PAISES: Pais[] = [
-  { href: "/pages/gastronomia-mundo/espana", src: "/imagenes/banderas/españa.png", title: "España" },
-  { href: "/pages/en-construccion", src: "/imagenes/banderas/francia.png", title: "Francia" },
-  { href: "/pages/en-construccion", src: "/imagenes/banderas/italia.png", title: "Italia" },
-  { href: "/pages/en-construccion", src: "/imagenes/banderas/alemania.png", title: "Alemania" },
-  { href: "/pages/en-construccion", src: "/imagenes/banderas/japon.png", title: "Japón" },
-  { href: "/pages/en-construccion", src: "/imagenes/banderas/china.png", title: "China" },
-  { href: "/pages/en-construccion", src: "/imagenes/banderas/marruecos.png", title: "Marruecos" },
-  { href: "/pages/en-construccion", src: "/imagenes/banderas/sudáfrica.png", title: "Sudáfrica" },
-  { href: "/pages/en-construccion", src: "/imagenes/banderas/EEUU.png", title: "EEUU" },
-  { href: "/pages/en-construccion", src: "/imagenes/banderas/mexico.png", title: "Mexico" },
-  { href: "/pages/en-construccion", src: "/imagenes/banderas/colombia.png", title: "Colombia" },
-  { href: "/pages/en-construccion", src: "/imagenes/banderas/peru.png", title: "Perú" },
-  { href: "/pages/en-construccion", src: "/imagenes/banderas/ecuador.png", title: "Ecuador" },
+  { slug: "espana", nombre: "España", src: "/imagenes/banderas/españa.png" },
+  { slug: "francia", nombre: "Francia", src: "/imagenes/banderas/francia.png" },
+  { slug: "italia", nombre: "Italia", src: "/imagenes/banderas/italia.png" },
+  { slug: "alemania", nombre: "Alemania", src: "/imagenes/banderas/alemania.png" },
+  { slug: "japon", nombre: "Japón", src: "/imagenes/banderas/japon.png" },
+  { slug: "china", nombre: "China", src: "/imagenes/banderas/china.png" },
+  { slug: "marruecos", nombre: "Marruecos", src: "/imagenes/banderas/marruecos.png" },
+  { slug: "sudafrica", nombre: "Sudáfrica", src: "/imagenes/banderas/sudáfrica.png" },
+  { slug: "eeuu", nombre: "EEUU", src: "/imagenes/banderas/EEUU.png" },
+  { slug: "mexico", nombre: "Mexico", src: "/imagenes/banderas/mexico.png" },
+  { slug: "colombia", nombre: "Colombia", src: "/imagenes/banderas/colombia.png" },
+  { slug: "peru", nombre: "Perú", src: "/imagenes/banderas/peru.png" },
+  { slug: "ecuador", nombre: "Ecuador", src: "/imagenes/banderas/ecuador.png" },
 ];
+
+/** Enlace canónico a la página de país con el país preseleccionado. */
+export const hrefPais = (slug: string) => `/pages/gastronomia-mundo?pais=${slug}`;
+
+/** Busca un país por su slug (`?pais=`). `undefined` si no existe. */
+export const paisPorSlug = (slug: string): Pais | undefined =>
+  PAISES.find((p) => p.slug === slug);

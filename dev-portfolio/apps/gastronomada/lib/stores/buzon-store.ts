@@ -1,6 +1,5 @@
 import { create } from "zustand";
 
-import { BUZON_SEED } from "@/lib/data/buzon";
 import type {
   BuzonSnapshot,
   Conversacion,
@@ -13,9 +12,9 @@ import type {
  *
  * Aquí zustand es la opción correcta: es estado de dominio en tiempo real
  * (no estado visual) que se comparte entre el badge del nav, la lista del buzón
- * y cada página de conversación, y que en el futuro alimentará un WebSocket.
- * `recibirMensaje` es el punto de entrada que disparará el socket; `hidratar`
- * carga el snapshot REST. El estado visual (pestaña activa, etc.) vive fuera,
+ * y cada página de conversación. El snapshot inicial llega por REST
+ * (`hidratar`/`hidratarHilo`); las novedades, por WebSocket (`recibirMensaje`,
+ * `recibirNotificacion`). El estado visual (pestaña activa, etc.) vive fuera,
  * en `useState`.
  */
 interface BuzonState {
@@ -23,14 +22,15 @@ interface BuzonState {
   notificaciones: Notificacion[];
   conectado: boolean;
 
-  // Mensaje entrante de otro usuario (lo disparará el WebSocket). Crea el hilo
+  // Mensaje entrante de otro usuario (lo dispara el WebSocket). Crea el hilo
   // si el usuario aún no tiene conversación.
   recibirMensaje: (
     de: string,
     mensaje: { id: string; texto: string; fecha: string },
   ) => void;
-  // Mensaje que envío yo en un hilo.
-  enviarMensaje: (usuario: string, texto: string) => void;
+  // Añade un mensaje ya formado a un hilo (tras enviarlo por REST). Crea el hilo
+  // si no existe.
+  agregarMensaje: (usuario: string, mensaje: MensajeChat) => void;
 
   recibirNotificacion: (notificacion: Notificacion) => void;
 
@@ -40,6 +40,19 @@ interface BuzonState {
 
   setConectado: (conectado: boolean) => void;
   hidratar: (snapshot: BuzonSnapshot) => void;
+  // Reemplaza los mensajes de un hilo concreto con los del backend.
+  hidratarHilo: (usuario: string, mensajes: MensajeChat[]) => void;
+}
+
+/** ¿El hilo de `usuario` ya contiene un mensaje con ese id? (evita duplicados
+ *  cuando el eco del WebSocket llega tras el añadido optimista del REST). */
+function existeMensaje(
+  conversaciones: Conversacion[],
+  usuario: string,
+  id: string,
+): boolean {
+  const conv = conversaciones.find((c) => c.usuario === usuario);
+  return conv?.mensajes.some((m) => m.id === id) ?? false;
 }
 
 /** Añade un mensaje al hilo del usuario (creándolo si no existe) y lo mueve arriba. */
@@ -64,33 +77,37 @@ function anadirMensaje(
 }
 
 export const useBuzonStore = create<BuzonState>((set) => ({
-  // Semilla temporal hasta que exista el backend (ver lib/data/buzon.ts).
-  conversaciones: BUZON_SEED.conversaciones,
-  notificaciones: BUZON_SEED.notificaciones,
+  // Vacío hasta hidratar desde el backend (`hidratar` con el snapshot REST).
+  conversaciones: [],
+  notificaciones: [],
   conectado: false,
 
   recibirMensaje: (de, mensaje) =>
-    set((s) => ({
-      conversaciones: anadirMensaje(s.conversaciones, de, {
-        ...mensaje,
-        propio: false,
-        leido: false,
-      }),
-    })),
+    set((s) =>
+      existeMensaje(s.conversaciones, de, mensaje.id)
+        ? s
+        : {
+            conversaciones: anadirMensaje(s.conversaciones, de, {
+              ...mensaje,
+              propio: false,
+              leido: false,
+            }),
+          },
+    ),
 
-  enviarMensaje: (usuario, texto) =>
-    set((s) => ({
-      conversaciones: anadirMensaje(s.conversaciones, usuario, {
-        id: crypto.randomUUID(),
-        texto,
-        fecha: new Date().toISOString(),
-        propio: true,
-        leido: true,
-      }),
-    })),
+  agregarMensaje: (usuario, mensaje) =>
+    set((s) =>
+      existeMensaje(s.conversaciones, usuario, mensaje.id)
+        ? s
+        : { conversaciones: anadirMensaje(s.conversaciones, usuario, mensaje) },
+    ),
 
   recibirNotificacion: (notificacion) =>
-    set((s) => ({ notificaciones: [notificacion, ...s.notificaciones] })),
+    set((s) =>
+      s.notificaciones.some((n) => n.id === notificacion.id)
+        ? s
+        : { notificaciones: [notificacion, ...s.notificaciones] },
+    ),
 
   marcarConversacionLeida: (usuario) =>
     set((s) => ({
@@ -121,12 +138,23 @@ export const useBuzonStore = create<BuzonState>((set) => ({
       conversaciones: snapshot.conversaciones,
       notificaciones: snapshot.notificaciones,
     }),
+  hidratarHilo: (usuario, mensajes) =>
+    set((s) => {
+      const existe = s.conversaciones.some((c) => c.usuario === usuario);
+      return {
+        conversaciones: existe
+          ? s.conversaciones.map((c) =>
+              c.usuario === usuario ? { ...c, mensajes } : c,
+            )
+          : [{ usuario, mensajes }, ...s.conversaciones],
+      };
+    }),
 }));
 
 // ── Selectores derivados reutilizables ──────────────────────────────────────
 export const selectMensajesNoLeidos = (s: BuzonState) =>
   s.conversaciones.reduce(
-    (acc, c) => acc + c.mensajes.filter((m) => !m.leido).length,
+    (acc, c) => acc + c.mensajes.filter((m) => !m.leido && !m.propio).length,
     0,
   );
 

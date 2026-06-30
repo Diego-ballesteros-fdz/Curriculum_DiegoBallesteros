@@ -4,7 +4,9 @@ import { env } from '@/config/env.js';
 import buzonRoutes from '@/modules/buzon/buzon.routes.js';
 import foroRoutes from '@/modules/foro/foro.routes.js';
 import healthRoutes from '@/modules/health/health.routes.js';
+import notificationRoutes from '@/modules/notification/notification.routes.js';
 import recetaRoutes from '@/modules/receta/receta.routes.js';
+import usersRoutes from '@/modules/users/users.routes.js';
 import type { RateLimitTier } from '@/plugins/02.security.js';
 
 declare module 'fastify' {
@@ -21,6 +23,8 @@ export default async function routes(fastify: FastifyInstance) {
   fastify.register(recetaRoutes, { prefix: `${env.API_PREFIX}/recetas` });
   fastify.register(foroRoutes, { prefix: `${env.API_PREFIX}/foro` });
   fastify.register(buzonRoutes, { prefix: `${env.API_PREFIX}/buzon` });
+  fastify.register(usersRoutes, { prefix: `${env.API_PREFIX}/users` });
+  fastify.register(notificationRoutes, { prefix: `${env.API_PREFIX}/notifications` });
 
   fastify.log.info('Routes ready');
 }

@@ -56,9 +56,18 @@ export const actualizarRecetaSchema = crearRecetaSchema
 export const recetaParamsSchema = z.object({ id: z.string() });
 
 // Query del listado: paginación + filtros opcionales por tipo y país.
+// El parámetro público se llama `type` (contrato del front); internamente el
+// dominio usa `tipo` (columna Prisma).
 export const listarRecetasQuerySchema = paginationQuerySchema.extend({
-  tipo: tipoRecetaSchema.optional(),
+  type: tipoRecetaSchema.optional(),
   pais: z.string().trim().min(1).optional(),
+  // `mias=true`: restringe el listado a las recetas del usuario autenticado
+  // (gestión en el perfil). Sin él, el listado es global: cualquier usuario
+  // autenticado ve todas las recetas.
+  mias: z
+    .enum(['true', 'false'])
+    .optional()
+    .transform((v) => v === 'true'),
 });
 
 export const listaRecetasSchema = listResponseSchema(recetaSchema);

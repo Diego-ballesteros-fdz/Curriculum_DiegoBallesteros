@@ -11,9 +11,11 @@ import {
 } from "@/lib/schemas/receta";
 
 /**
- * API REST de recetas (`{API_PREFIX}/recetas`). Todas las rutas requieren sesión
- * y el backend filtra por propietario (scope OWN): un usuario solo ve/gestiona
- * sus recetas. Validamos la respuesta con zod antes de devolverla a la UI.
+ * API REST de recetas (`{API_PREFIX}/recetas`). Todas las rutas requieren sesión.
+ * La LECTURA es pública entre usuarios autenticados: cualquiera ve todas las
+ * recetas (`listarRecetas`). El perfil pide solo las suyas con `mias=true`
+ * (`listarMisRecetas`). La ESCRITURA (crear/editar/eliminar) la limita el backend
+ * al autor. Validamos la respuesta con zod antes de devolverla a la UI.
  */
 
 const listaRecetasSchema = z.object({
@@ -21,24 +23,31 @@ const listaRecetasSchema = z.object({
   meta: metaSchema,
 });
 
-/** Filtros del listado de recetas del usuario. */
+/** Filtros del listado de recetas. El param público es `type` (contrato back). */
 export interface RecetaFiltros {
-  tipo?: TipoReceta;
+  type?: TipoReceta;
   pais?: string;
 }
 
-function buildQuery(filtros?: RecetaFiltros): string {
+function buildQuery(filtros?: RecetaFiltros, soloMias?: boolean): string {
   const params = new URLSearchParams();
-  // El back pagina (máx. 50/página). En el perfil traemos la página completa.
+  // El back pagina (máx. 50/página). Traemos la página completa.
   params.set("limit", "50");
-  if (filtros?.tipo) params.set("tipo", filtros.tipo);
+  if (filtros?.type) params.set("type", filtros.type);
   if (filtros?.pais) params.set("pais", filtros.pais);
+  if (soloMias) params.set("mias", "true");
   return params.toString();
 }
 
-/** Lista las recetas del usuario autenticado, opcionalmente filtradas. */
-export async function listarMisRecetas(filtros?: RecetaFiltros): Promise<Receta[]> {
+/** Lista TODAS las recetas (lectura pública), opcionalmente filtradas. */
+export async function listarRecetas(filtros?: RecetaFiltros): Promise<Receta[]> {
   const res = await api.get<unknown>(`/recetas?${buildQuery(filtros)}`);
+  return listaRecetasSchema.parse(res).data;
+}
+
+/** Lista solo las recetas del usuario autenticado (gestión en el perfil). */
+export async function listarMisRecetas(filtros?: RecetaFiltros): Promise<Receta[]> {
+  const res = await api.get<unknown>(`/recetas?${buildQuery(filtros, true)}`);
   return listaRecetasSchema.parse(res).data;
 }
 

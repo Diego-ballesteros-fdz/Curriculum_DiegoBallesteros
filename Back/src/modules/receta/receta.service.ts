@@ -1,6 +1,5 @@
 import type { Receta } from '@prisma/client';
 
-import type { ScopeContext } from '@/types/base.types.js';
 import { HttpError } from '@/utils/http.error.js';
 
 import type { RecetaRepository } from './receta.repository.js';
@@ -28,11 +27,12 @@ export class RecetaService {
   }
 
   async listar(
-    scope: ScopeContext,
     page: { skip: number; take: number },
     filtros: { tipo?: 'tradicional' | 'moderna'; pais?: string } = {},
+    // `ownerUserId` presente solo cuando se piden "mis recetas" (perfil): acota
+    // el listado al propietario. Sin él, el listado es global (lectura pública).
+    ownerUserId?: string,
   ) {
-    // Filtros opcionales por tipo y país; se combinan con el scope del usuario.
     const where: { tipo?: 'tradicional' | 'moderna'; pais?: string } = {};
     if (filtros.tipo) where.tipo = filtros.tipo;
     if (filtros.pais) where.pais = filtros.pais;
@@ -42,13 +42,14 @@ export class RecetaService {
       skip: page.skip,
       take: page.take,
       orderBy: { createdAt: 'desc' },
-      scope,
+      scope: ownerUserId ? { scope: 'OWN', userId: ownerUserId } : undefined,
     });
     return { data: data.map((r) => this.toDTO(r)), total };
   }
 
-  async obtener(id: string, scope: ScopeContext): Promise<RecetaDTO> {
-    const receta = await this.repository.findFirst({ where: { id }, scope });
+  // Lectura pública: cualquier usuario autenticado puede ver cualquier receta.
+  async obtener(id: string): Promise<RecetaDTO> {
+    const receta = await this.repository.findFirst({ where: { id } });
     if (!receta) throw new HttpError(404, 'Receta no encontrada');
     return this.toDTO(receta);
   }
@@ -73,11 +74,15 @@ export class RecetaService {
   async actualizar(
     id: string,
     input: ActualizarRecetaInput,
-    scope: ScopeContext,
+    userId: string,
   ): Promise<RecetaDTO> {
-    // Verifica propiedad dentro del scope antes de mutar.
-    const existing = await this.repository.findFirst({ where: { id }, scope });
+    // Solo el autor puede editar; los admin NO tienen privilegio sobre recetas
+    // ajenas. Distinguimos "no existe" (404) de "no es tuya" (403).
+    const existing = await this.repository.findFirst({ where: { id } });
     if (!existing) throw new HttpError(404, 'Receta no encontrada');
+    if (existing.userId !== userId) {
+      throw new HttpError(403, 'No puedes modificar una receta que no es tuya');
+    }
 
     const data: Record<string, unknown> = {};
     if (input.nombre !== undefined) data.nombre = input.nombre;
@@ -95,9 +100,13 @@ export class RecetaService {
     return this.toDTO(receta);
   }
 
-  async eliminar(id: string, scope: ScopeContext): Promise<void> {
-    const existing = await this.repository.findFirst({ where: { id }, scope });
+  async eliminar(id: string, userId: string): Promise<void> {
+    // Solo el autor puede eliminar (admin sin privilegio especial).
+    const existing = await this.repository.findFirst({ where: { id } });
     if (!existing) throw new HttpError(404, 'Receta no encontrada');
+    if (existing.userId !== userId) {
+      throw new HttpError(403, 'No puedes eliminar una receta que no es tuya');
+    }
     await this.repository.delete({ where: { id } });
   }
 }

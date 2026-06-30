@@ -1,27 +1,3 @@
-const SOCIALS = [
-  {
-    title: "Instagram",
-    href: "https://www.instagram.com/",
-    base: "/imagenes/Redes_Sociales/instagram.png",
-    light: "/imagenes/Redes_Sociales/instagram_fotter_hover.png",
-    accent: "/imagenes/Redes_Sociales/instagram_a_hover.png",
-  },
-  {
-    title: "Facebook",
-    href: "https://es-es.facebook.com/",
-    base: "/imagenes/Redes_Sociales/facebook_black.png",
-    light: "/imagenes/Redes_Sociales/facebookFotter_hover.png",
-    accent: "/imagenes/Redes_Sociales/facebooka_hover.png",
-  },
-  {
-    title: "X",
-    href: "https://x.com/",
-    base: "/imagenes/Redes_Sociales/gorjeo.png",
-    light: "/imagenes/Redes_Sociales/X_fotter_hover.png",
-    accent: "/imagenes/Redes_Sociales/X_a_hover.png",
-  },
-];
-
 /**
  * URL del portfolio de Diego dentro del monorepo. En desarrollo corre en el
  * puerto 3000; en producción se inyecta por entorno.
@@ -31,7 +7,7 @@ const PORTFOLIO_URL =
 
 export default function Footer() {
   return (
-    <footer className="group/footer flex h-20 items-center justify-center gap-8 bg-gold px-12 text-very-dark transition-colors hover:bg-dark hover:text-cream">
+    <footer className="flex min-h-20 flex-col items-center justify-center gap-3 bg-gold px-6 py-4 text-center text-very-dark transition-colors hover:bg-dark hover:text-cream sm:flex-row sm:justify-between sm:gap-8 sm:px-12 sm:text-left">
       <a
         href={PORTFOLIO_URL}
         title="Portfolio de Diego Ballesteros"
@@ -40,43 +16,11 @@ export default function Footer() {
         ← Portfolio
       </a>
 
-      <div className="flex flex-col items-center gap-0.5">
+      <div className="flex flex-col items-center gap-0.5 sm:items-end">
         <span className="text-sm font-bold">Información de contacto</span>
-        <span className="text-sm">Redes Sociales</span>
-      </div>
-
-      <div className="flex items-center gap-5">
-        {SOCIALS.map((s) => (
-          <a
-            key={s.title}
-            href={s.href}
-            title={s.title}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group/icon relative block size-5 transition-transform hover:scale-110"
-          >
-            {/* Icono negro: visible por defecto, oculto al hacer hover en el footer */}
-            <img
-              src={s.base}
-              alt={s.title}
-              className="absolute inset-0 size-5 transition-opacity group-hover/footer:opacity-0"
-            />
-            {/* Variante clara: visible con el footer en hover, oculta sobre este icono */}
-            <img
-              src={s.light}
-              alt=""
-              aria-hidden
-              className="absolute inset-0 size-5 opacity-0 transition-opacity group-hover/footer:opacity-100 group-hover/icon:opacity-0"
-            />
-            {/* Variante de acento: solo al pasar sobre este icono */}
-            <img
-              src={s.accent}
-              alt=""
-              aria-hidden
-              className="absolute inset-0 size-5 opacity-0 transition-opacity group-hover/icon:opacity-100"
-            />
-          </a>
-        ))}
+        <span className="text-sm">
+          Diego Ballesteros Fernández | diego.ball.fdz@gmail.com
+        </span>
       </div>
     </footer>
   );

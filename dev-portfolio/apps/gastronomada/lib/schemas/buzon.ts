@@ -35,49 +35,29 @@ export const conversacionSchema = z.object({
 
 export type Conversacion = z.infer<typeof conversacionSchema>;
 
-export const tipoNotificacionSchema = z.enum([
-  "seguidor",
-  "comentario",
-  "like",
-  "sistema",
-]);
+/** Tipo de notificación: `mention` (foro), `dm` (mensaje directo), `sistema`. */
+export const tipoNotificacionSchema = z.enum(["mention", "dm", "sistema"]);
 
 export type TipoNotificacion = z.infer<typeof tipoNotificacionSchema>;
 
 export const notificacionSchema = z.object({
   id: z.string(),
-  tipo: tipoNotificacionSchema,
+  type: tipoNotificacionSchema,
   texto: z.string(),
-  fecha: z.string(),
   leido: z.boolean(),
+  /** Origen (nombre del usuario) y enlaces opcionales según el tipo. */
+  from: z.string().nullish(),
+  foroMessageId: z.string().nullish(),
+  conversacionId: z.string().nullish(),
+  fecha: z.string(),
 });
 
 export type Notificacion = z.infer<typeof notificacionSchema>;
 
-/** Snapshot inicial servido por REST al cargar el buzón (antes de abrir el socket). */
+/** Snapshot inicial servido por REST al cargar el buzón. */
 export const buzonSnapshotSchema = z.object({
   conversaciones: z.array(conversacionSchema),
   notificaciones: z.array(notificacionSchema),
 });
 
 export type BuzonSnapshot = z.infer<typeof buzonSnapshotSchema>;
-
-/**
- * Frame en tiempo real del WebSocket. Unión discriminada por `tipo`:
- *  - `mensaje`: lo envía `de` (otro usuario); el store lo añade a su hilo.
- *  - `notificacion`: una notificación suelta.
- */
-export const eventoBuzonSchema = z.discriminatedUnion("tipo", [
-  z.object({
-    tipo: z.literal("mensaje"),
-    de: z.string(),
-    mensaje: z.object({
-      id: z.string(),
-      texto: z.string(),
-      fecha: z.string(),
-    }),
-  }),
-  z.object({ tipo: z.literal("notificacion"), payload: notificacionSchema }),
-]);
-
-export type EventoBuzon = z.infer<typeof eventoBuzonSchema>;

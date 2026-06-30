@@ -6,36 +6,74 @@ import { ArrowLeft, Send } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { formatHora } from "@/lib/format";
+import {
+  enviarMensajeBuzon,
+  getHilo,
+  marcarHiloLeido,
+} from "@/lib/api/buzon";
+import { ApiError } from "@/lib/api/http";
+import { unirseAlHilo } from "@/lib/realtime/ws-client";
 import { selectConversacion, useBuzonStore } from "@/lib/stores/buzon-store";
 
 export default function Conversacion({ usuario }: { usuario: string }) {
   const conversacion = useBuzonStore(selectConversacion(usuario));
-  const enviarMensaje = useBuzonStore((s) => s.enviarMensaje);
+  const agregarMensaje = useBuzonStore((s) => s.agregarMensaje);
+  const hidratarHilo = useBuzonStore((s) => s.hidratarHilo);
   const marcarConversacionLeida = useBuzonStore((s) => s.marcarConversacionLeida);
 
   const [borrador, setBorrador] = useState("");
+  const [enviando, setEnviando] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const finRef = useRef<HTMLDivElement>(null);
 
   const mensajes = conversacion?.mensajes ?? [];
   const numMensajes = mensajes.length;
 
-  // Marca el hilo como leído al abrirlo y cuando llegan mensajes nuevos.
+  // Carga el hilo desde el backend al abrirlo y lo marca como leído (REST + local).
+  // También se une al hilo por WebSocket para recibir mensajes en vivo (que el
+  // store integra de forma global; este componente los lee del store).
   useEffect(() => {
-    marcarConversacionLeida(usuario);
-  }, [usuario, numMensajes, marcarConversacionLeida]);
+    let activo = true;
+    const salirDelHilo = unirseAlHilo(usuario);
+    (async () => {
+      try {
+        const hilo = await getHilo(usuario);
+        if (!activo) return;
+        hidratarHilo(usuario, hilo.mensajes);
+        marcarConversacionLeida(usuario);
+        if (hilo.mensajes.length > 0) await marcarHiloLeido(usuario);
+      } catch {
+        // Si falla la carga, dejamos lo que ya hubiera en el store.
+      }
+    })();
+    return () => {
+      activo = false;
+      salirDelHilo();
+    };
+  }, [usuario, hidratarHilo, marcarConversacionLeida]);
 
   // Mantiene el scroll al final (comportamiento de chat).
   useEffect(() => {
     finRef.current?.scrollIntoView({ block: "end" });
   }, [numMensajes]);
 
-  function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     const texto = borrador.trim();
-    if (!texto) return;
-    // En el futuro: `await api.post("/buzon/" + usuario, { texto })`.
-    enviarMensaje(usuario, texto);
-    setBorrador("");
+    if (!texto || enviando) return;
+    setError(null);
+    setEnviando(true);
+    try {
+      const mensaje = await enviarMensajeBuzon(usuario, texto);
+      agregarMensaje(usuario, mensaje);
+      setBorrador("");
+    } catch (err) {
+      setError(
+        err instanceof ApiError ? err.message : "No se pudo enviar el mensaje.",
+      );
+    } finally {
+      setEnviando(false);
+    }
   }
 
   return (
@@ -93,27 +131,32 @@ export default function Conversacion({ usuario }: { usuario: string }) {
         </div>
 
         {/* Redactar */}
-        <form
-          onSubmit={onSubmit}
-          className="flex shrink-0 items-center gap-2 border-t border-app-border p-3"
-        >
-          <input
-            type="text"
-            value={borrador}
-            onChange={(e) => setBorrador(e.target.value)}
-            placeholder={`Escribe a ${usuario}…`}
-            aria-label="Mensaje"
-            className="flex-1 rounded-full border border-app-border bg-surface-2 px-4 py-2.5 text-sm text-surface-fg placeholder:text-surface-muted outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/30"
-          />
-          <button
-            type="submit"
-            disabled={!borrador.trim()}
-            aria-label="Enviar"
-            className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand text-brand-fg transition hover:bg-brand/90 active:translate-y-px disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <Send className="size-5" />
-          </button>
-        </form>
+        <div className="shrink-0 border-t border-app-border">
+          {error && (
+            <p role="alert" className="px-4 pt-2 text-xs font-medium text-destructive">
+              {error}
+            </p>
+          )}
+          <form onSubmit={onSubmit} className="flex items-center gap-2 p-3">
+            <input
+              type="text"
+              value={borrador}
+              onChange={(e) => setBorrador(e.target.value)}
+              placeholder={`Escribe a ${usuario}…`}
+              aria-label="Mensaje"
+              disabled={enviando}
+              className="flex-1 rounded-full border border-app-border bg-surface-2 px-4 py-2.5 text-sm text-surface-fg placeholder:text-surface-muted outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/30 disabled:opacity-60"
+            />
+            <button
+              type="submit"
+              disabled={!borrador.trim() || enviando}
+              aria-label="Enviar"
+              className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand text-brand-fg transition hover:bg-brand/90 active:translate-y-px disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <Send className="size-5" />
+            </button>
+          </form>
+        </div>
       </div>
     </main>
   );

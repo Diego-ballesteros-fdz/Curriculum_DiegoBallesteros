@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ChefHat, Pencil, Plus, Trash2 } from "lucide-react";
 
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -45,25 +45,33 @@ export default function PerfilRecetas({ nombre }: { nombre: string }) {
   const [editando, setEditando] = useState<Receta | null>(null);
   const [eliminandoId, setEliminandoId] = useState<string | null>(null);
 
-  const cargar = useCallback(async () => {
-    setCargando(true);
-    setError(null);
-    try {
-      setRecetas(await listarMisRecetas(filtros));
-    } catch (err) {
-      setError(
-        err instanceof ApiError
-          ? err.message
-          : "No se pudieron cargar tus recetas.",
-      );
-    } finally {
-      setCargando(false);
-    }
-  }, [filtros]);
-
   useEffect(() => {
-    cargar();
-  }, [cargar]);
+    let activo = true;
+    // El estado de carga se difiere fuera del cuerpo síncrono del efecto; el
+    // resto de actualizaciones ocurren en los callbacks de la promesa.
+    queueMicrotask(() => {
+      if (activo) setCargando(true);
+    });
+    listarMisRecetas(filtros)
+      .then((data) => {
+        if (!activo) return;
+        setRecetas(data);
+        setError(null);
+      })
+      .catch((err) => {
+        if (activo) {
+          setError(
+            err instanceof ApiError ? err.message : "No se pudieron cargar tus recetas.",
+          );
+        }
+      })
+      .finally(() => {
+        if (activo) setCargando(false);
+      });
+    return () => {
+      activo = false;
+    };
+  }, [filtros]);
 
   function abrirCrear() {
     setEditando(null);
@@ -127,11 +135,11 @@ export default function PerfilRecetas({ nombre }: { nombre: string }) {
         <select
           aria-label="Filtrar por tipo"
           className={selectClass}
-          value={filtros.tipo ?? ""}
+          value={filtros.type ?? ""}
           onChange={(e) =>
             setFiltros((f) => ({
               ...f,
-              tipo: e.target.value ? (e.target.value as Receta["tipo"]) : undefined,
+              type: e.target.value ? (e.target.value as Receta["tipo"]) : undefined,
             }))
           }
         >
@@ -174,7 +182,7 @@ export default function PerfilRecetas({ nombre }: { nombre: string }) {
         <div className="flex flex-col items-center gap-3 rounded-xl bg-surface-2 p-12 text-center">
           <ChefHat className="size-10 text-surface-muted" />
           <p className="text-sm text-surface-muted">
-            {filtros.tipo || filtros.pais
+            {filtros.type || filtros.pais
               ? "No tienes recetas con esos filtros."
               : "Aún no has subido ninguna receta. ¡Anímate a compartir la primera!"}
           </p>

@@ -1,12 +1,15 @@
 import { z } from 'zod';
 
+import { notificationSchema } from '@/modules/notification/notification.schema.js';
+
 // ==========================================
 // CONTRATO DEL BUZÓN (CONVERSACION)
 // ==========================================
 //
 // Alineado con `lib/schemas/buzon.ts` del front. Los mensajes directos se
 // modelan como conversaciones por usuario: cada `usuario` (handle) es id/slug
-// del hilo. `fecha` viaja como ISO 8601 (UTC).
+// del hilo. `fecha` viaja como ISO 8601 (UTC). Las notificaciones del snapshot
+// usan el contrato del módulo `notification`.
 
 export const TEXTO_MAX = 1000;
 
@@ -23,20 +26,10 @@ export const conversacionSchema = z.object({
   mensajes: z.array(mensajeChatSchema),
 });
 
-export const tipoNotificacionSchema = z.enum(['seguidor', 'comentario', 'like', 'sistema']);
-
-export const notificacionSchema = z.object({
-  id: z.string(),
-  tipo: tipoNotificacionSchema,
-  texto: z.string(),
-  fecha: z.string(),
-  leido: z.boolean(),
-});
-
 // Snapshot inicial servido por REST al cargar el buzón.
 export const buzonSnapshotSchema = z.object({
   conversaciones: z.array(conversacionSchema),
-  notificaciones: z.array(notificacionSchema),
+  notificaciones: z.array(notificationSchema),
 });
 
 export const buzonParamsSchema = z.object({ usuario: z.string().min(1) });
