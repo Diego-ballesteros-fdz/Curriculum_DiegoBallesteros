@@ -25,7 +25,8 @@ export type Project = {
  * URL de la app Gastronómada dentro del monorepo. En desarrollo corre en el
  * puerto 3001 (ver turbo + script `dev`); en producción se inyecta por entorno.
  */
-const GASTRONOMADA_URL = process.env.NEXT_PUBLIC_GASTRONOMADA_URL;
+const GASTRONOMADA_URL =
+  process.env.NEXT_PUBLIC_GASTRONOMADA_URL ?? "http://localhost:3001";
 
 export const PROJECTS: Project[] = [
   {
