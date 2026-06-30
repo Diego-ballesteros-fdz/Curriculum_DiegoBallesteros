@@ -10,8 +10,12 @@ import { z } from "zod";
  * que reutilizar estos mismos esquemas para validar las peticiones.
  */
 
-/** Longitud mínima de contraseña. Coincide con el `minLength` de los formularios previos. */
-export const PASSWORD_MIN_LENGTH = 11;
+/**
+ * Longitud mínima de contraseña. Alineada con la política REAL del backend
+ * (better-auth valida `minPasswordLength: 8`). El front no debe ser más estricto
+ * que el back o rechazaría en cliente credenciales que el servidor sí acepta.
+ */
+export const PASSWORD_MIN_LENGTH = 8;
 
 // ── Primitivas reutilizables ───────────────────────────────────────────────
 export const emailSchema = z.email("Introduce un correo electrónico válido").trim();

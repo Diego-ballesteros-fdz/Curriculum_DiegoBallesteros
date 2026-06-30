@@ -1,30 +1,30 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-import { SESSION_COOKIE, esRutaAuth, esRutaPublica } from "@/lib/auth/config";
-import { verifyToken } from "@/lib/auth/token";
+import { AUTH_SESSION_COOKIE, esRutaAuth, esRutaPublica } from "@/lib/auth/config";
 
 /**
- * Primer filtro de acceso (modelo de ruta protegida).
+ * Primer filtro de acceso (modelo de ruta protegida) — OPTIMISTA.
  *
- * Verifica el token de sesión (HMAC, Web Crypto compatible con Edge) y:
- *  - redirige a `/pages/login` cualquier ruta no pública sin sesión válida,
- *  - saca de las páginas de auth a quien ya tiene sesión.
+ * Comprueba solo la PRESENCIA de la cookie de sesión de better-auth (es httpOnly
+ * y la firma la valida el backend, no el Edge). Combinado con la verificación
+ * autoritativa de `getSession()` en el servidor es defensa en profundidad:
+ *  - saca de las páginas de auth a quien ya parece tener sesión,
+ *  - redirige a `/pages/login` cualquier ruta no pública sin cookie de sesión.
  *
- * Es defensa en profundidad junto a `getSession()` en el servidor: aunque
- * alguien falsee la cookie, el token no validará y la página/acción también lo
- * rechazará.
+ * Una cookie falseada supera este filtro pero la rechazará el backend en el SSR.
  */
-export async function middleware(req: NextRequest) {
+export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  const token = req.cookies.get(SESSION_COOKIE)?.value;
-  const autenticado = token ? (await verifyToken(token)) !== null : false;
+  const tieneSesion =
+    req.cookies.has(AUTH_SESSION_COOKIE) ||
+    req.cookies.has(`__Secure-${AUTH_SESSION_COOKIE}`);
 
-  if (autenticado && esRutaAuth(pathname)) {
+  if (tieneSesion && esRutaAuth(pathname)) {
     return NextResponse.redirect(new URL("/", req.url));
   }
 
-  if (!autenticado && !esRutaPublica(pathname)) {
+  if (!tieneSesion && !esRutaPublica(pathname)) {
     const url = new URL("/pages/login", req.url);
     url.searchParams.set("redirect", pathname);
     return NextResponse.redirect(url);

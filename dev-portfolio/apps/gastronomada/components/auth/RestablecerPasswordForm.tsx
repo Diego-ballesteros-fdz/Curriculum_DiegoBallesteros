@@ -48,7 +48,7 @@ export default function RestablecerPasswordForm() {
               id="password"
               type="password"
               autoComplete="new-password"
-              placeholder="Mínimo 11 caracteres"
+              placeholder="Mínimo 8 caracteres"
               className={inputClass}
               {...register("password")}
             />

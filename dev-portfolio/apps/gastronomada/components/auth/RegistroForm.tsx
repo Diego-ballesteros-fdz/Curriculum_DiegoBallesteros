@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { registroSchema, type RegistroFormValues, type RegistroInput } from "@/lib/schemas";
-import { registroAction } from "@/lib/auth/actions";
+import { signUp } from "@/lib/auth-client";
 import { AuthShell, Field, SubmitButton, FormBanner, inputClass } from "./form-ui";
 
 export default function RegistroForm() {
@@ -32,12 +32,17 @@ export default function RegistroForm() {
 
   async function onSubmit(values: RegistroInput) {
     setServerError(null);
-    // La server action valida en el servidor y crea la sesión. El resto de
-    // campos del contrato (género, nivel, boletín) los persistirá el backend
-    // cuando extienda el modelo de usuario.
-    const resultado = await registroAction(values);
-    if (!resultado.ok) {
-      setServerError(resultado.error);
+    // El backend (better-auth) crea la cuenta, envía el email de verificación y
+    // hace auto-login (deja la cookie de sesión). El resto de campos del contrato
+    // (usuario, género, nivel, boletín) los persistirá el backend cuando extienda
+    // el modelo de usuario; hoy solo acepta email/password/name.
+    const { error } = await signUp.email({
+      email: values.email,
+      password: values.password,
+      name: `${values.nombre} ${values.apellidos}`.trim(),
+    });
+    if (error) {
+      setServerError(error.message ?? "No se pudo crear la cuenta.");
       return;
     }
     router.push("/");
@@ -80,7 +85,7 @@ export default function RegistroForm() {
 
         <div className="grid grid-cols-2 gap-4">
           <Field label="Contraseña" htmlFor="password" error={errors.password?.message}>
-            <input id="password" type="password" autoComplete="new-password" placeholder="Mínimo 11 caracteres" className={inputClass} {...register("password")} />
+            <input id="password" type="password" autoComplete="new-password" placeholder="Mínimo 8 caracteres" className={inputClass} {...register("password")} />
           </Field>
           <Field label="Repite la contraseña" htmlFor="confirmarPassword" error={errors.confirmarPassword?.message}>
             <input id="confirmarPassword" type="password" autoComplete="new-password" placeholder="Repite la contraseña" className={inputClass} {...register("confirmarPassword")} />

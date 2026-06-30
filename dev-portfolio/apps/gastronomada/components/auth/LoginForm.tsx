@@ -8,7 +8,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 
 import { loginSchema, type LoginFormValues, type LoginInput } from "@/lib/schemas";
-import { loginAction } from "@/lib/auth/actions";
+import { signIn } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 
 /**
@@ -44,9 +44,14 @@ export default function LoginForm() {
 
   async function onSubmit(values: LoginInput) {
     setServerError(null);
-    const resultado = await loginAction(values);
-    if (!resultado.ok) {
-      setServerError(resultado.error);
+    // Mensaje genérico ante error: no revela si el email existe (anti-enumeración).
+    const { error } = await signIn.email({
+      email: values.email,
+      password: values.password,
+      rememberMe: values.recordarme,
+    });
+    if (error) {
+      setServerError("Correo o contraseña incorrectos.");
       return;
     }
     router.push(rutaSegura(searchParams.get("redirect")));

@@ -1,18 +1,16 @@
 /**
- * Configuración central de la sesión.
- *
- * Implementación mock con mecánica real (cookie httpOnly firmada + middleware),
- * pensada para sustituirse por better-auth + backend REST sin tocar la UI.
+ * Configuración de rutas y cookies del front.
  */
 
-/** Nombre de la cookie de sesión. */
-export const SESSION_COOKIE = "gn_session";
+/**
+ * Nombre de la cookie de sesión que pone better-auth (backend). El middleware
+ * solo comprueba su PRESENCIA (filtro optimista); la validez la verifica el
+ * backend a través de `getSession()`.
+ */
+export const AUTH_SESSION_COOKIE = "better-auth.session_token";
 
 /** Nombre de la cookie de preferencia de tema (no sensible). */
 export const THEME_COOKIE = "gn_tema";
-
-/** Duración de la sesión en segundos (7 días). */
-export const SESSION_MAX_AGE = 60 * 60 * 24 * 7;
 
 /** Rutas públicas accesibles sin sesión. El resto del sitio requiere sesión. */
 export const RUTAS_PUBLICAS = [

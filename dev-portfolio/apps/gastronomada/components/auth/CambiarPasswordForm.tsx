@@ -10,7 +10,7 @@ import {
   type CambiarPasswordFormValues,
   type CambiarPasswordInput,
 } from "@/lib/schemas";
-import { cambiarPasswordAction } from "@/lib/auth/actions";
+import { changePassword } from "@/lib/auth-client";
 import { AuthShell, Field, FormBanner, SubmitButton, inputClass } from "./form-ui";
 
 export default function CambiarPasswordForm() {
@@ -29,9 +29,16 @@ export default function CambiarPasswordForm() {
   async function onSubmit(values: CambiarPasswordInput) {
     setServerError(null);
     setExito(false);
-    const resultado = await cambiarPasswordAction(values);
-    if (!resultado.ok) {
-      setServerError(resultado.error);
+    const { error } = await changePassword({
+      currentPassword: values.actual,
+      newPassword: values.password,
+      // Cerrar el resto de sesiones tras cambiar la contraseña (buena práctica).
+      revokeOtherSessions: true,
+    });
+    if (error) {
+      setServerError(
+        error.message ?? "No se pudo cambiar la contraseña. Revisa la actual.",
+      );
       return;
     }
     setExito(true);
@@ -68,7 +75,7 @@ export default function CambiarPasswordForm() {
             id="password"
             type="password"
             autoComplete="new-password"
-            placeholder="Mínimo 11 caracteres"
+            placeholder="Mínimo 8 caracteres"
             className={inputClass}
             {...register("password")}
           />

@@ -24,7 +24,7 @@ export default async function ConversacionPage({
   }
 
   // Un usuario no puede abrir una conversación consigo mismo.
-  if (session.user.usuario === decodeURIComponent(usuario)) {
+  if (session.user.name === decodeURIComponent(usuario)) {
     redirect("/pages/buzon");
   }
 

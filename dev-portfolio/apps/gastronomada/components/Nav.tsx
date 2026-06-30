@@ -2,22 +2,30 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Inbox, KeyRound, LogOut, Moon, Search, Sun, User } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Inbox, KeyRound, LogOut, Moon, Search, Sun, User, UserCircle } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { PAISES } from "@/components/nav/paises";
 import { selectTotalNoLeidos, useBuzonStore } from "@/lib/stores/buzon-store";
 import { useUsuario } from "@/components/auth/SessionProvider";
 import { useTema } from "@/components/ThemeProvider";
-import { logoutAction } from "@/lib/auth/actions";
+import { signOut } from "@/lib/auth-client";
 
 type ActiveMenu = "paises" | "recetas" | "perfil" | null;
 
 export default function Nav() {
+  const router = useRouter();
   const usuario = useUsuario();
   const [active, setActive] = useState<ActiveMenu>(null);
   const noLeidos = useBuzonStore(selectTotalNoLeidos);
   const { tema, alternar } = useTema();
+
+  async function cerrarSesion() {
+    await signOut();
+    router.push("/");
+    router.refresh();
+  }
 
   const toggle = (menu: ActiveMenu) =>
     setActive((prev) => (prev === menu ? null : menu));
@@ -162,8 +170,16 @@ export default function Nav() {
             {active === "perfil" && (
               <DropdownPanel className="right-0 w-56">
                 <p className="mb-2 truncate border-b border-cream/15 pb-2 text-sm font-bold text-cream">
-                  {usuario.usuario}
+                  {usuario.name}
                 </p>
+                <Link
+                  href="/pages/perfil"
+                  onClick={close}
+                  className="flex items-center gap-2 rounded-md px-2 py-2 text-sm text-cream transition-colors hover:bg-very-dark"
+                >
+                  <UserCircle className="size-4" />
+                  Mi perfil
+                </Link>
                 <Link
                   href="/pages/cambiar-contrasena"
                   onClick={close}
@@ -180,15 +196,14 @@ export default function Nav() {
                   {tema === "oscuro" ? <Sun className="size-4" /> : <Moon className="size-4" />}
                   Tema: {tema === "oscuro" ? "Claro" : "Oscuro"}
                 </button>
-                <form action={logoutAction}>
-                  <button
-                    type="submit"
-                    className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm font-semibold text-destructive transition-colors hover:bg-very-dark"
-                  >
-                    <LogOut className="size-4" />
-                    Cerrar sesión
-                  </button>
-                </form>
+                <button
+                  type="button"
+                  onClick={cerrarSesion}
+                  className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm font-semibold text-destructive transition-colors hover:bg-very-dark"
+                >
+                  <LogOut className="size-4" />
+                  Cerrar sesión
+                </button>
               </DropdownPanel>
             )}
           </div>
