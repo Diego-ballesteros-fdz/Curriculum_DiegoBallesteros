@@ -1,3 +1,6 @@
+# Postgres SOLO para desarrollo local. Railway NO usa este fichero:
+# en producción la BD es un servicio Postgres gestionado (DATABASE_URL inyectada).
+# Local: DATABASE_URL=postgresql://postgres:Admin123.@localhost:5432/portfolio
 services:
   db:
     image: postgres:16
