@@ -34,8 +34,12 @@ export const baseSchema = z.object({
   RATE_LIMIT_MAX: z.coerce.number().default(100),
   RATE_LIMIT_WINDOW: z.string().default('1 minute'),
 
-  // Swagger
-  SWAGGER_ENABLED: z.coerce.boolean().default(false),
+  // Swagger — z.coerce.boolean() convierte cualquier string no vacío (incl. "false") en true,
+  // así que parseamos el string explícitamente.
+  SWAGGER_ENABLED: z
+    .string()
+    .default('false')
+    .transform((v) => v === 'true' || v === '1'),
 });
 
 export const envSchema = baseSchema;
