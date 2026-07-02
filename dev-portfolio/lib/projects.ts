@@ -48,10 +48,7 @@ export const PROJECTS: Project[] = [
       "React Hook Form",
       "Vercel",
     ],
-    links: [
-      { label: "demo", href: "#" },
-      { label: "repo", href: "https://github.com/AWSDashboard" },
-    ],
+    links: [{ label: "repo", href: "https://github.com/AWSDashboard" }],
   },
   {
     slug: "microservicios-home-lab",
@@ -95,7 +92,10 @@ export const PROJECTS: Project[] = [
     ],
     links: [
       { label: "demo", href: GASTRONOMADA_URL },
-      { label: "repo", href: "#" },
+      {
+        label: "repo",
+        href: "https://github.com/Diego-ballesteros-fdz/Curriculum_DiegoBallesteros",
+      },
     ],
   },
 ];
