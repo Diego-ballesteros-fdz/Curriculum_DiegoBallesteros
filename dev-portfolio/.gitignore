@@ -6,9 +6,6 @@
 **/out
 **/build
 
-# turborepo
-**/.turbo
-
 # misc
 **/.DS_Store
 **/*.pem

@@ -2,81 +2,88 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Monorepo layout
+## Qué es
 
-`dev-portfolio/` is an **npm-workspaces + Turborepo** monorepo. It currently holds two
-autonomous Next.js apps:
+Una **única app Next.js 16** (App Router) que integra dos experiencias bajo el
+mismo despliegue de Vercel:
 
-- **`apps/portfolio`** — the landing (terminal/CMD style). Dev port **3000**.
-- **`apps/gastronomada`** — gastronomic social app with auth (better-auth), forum,
-  inbox, recipes. Dev port **3001**. Has its own `CLAUDE.md`.
+- **Portfolio** — landing estilo terminal/CMD. Se sirve en la **raíz `/`**.
+- **GastroNómada** — red social gastronómica (better-auth, foro, buzón, recetas).
+  Todas sus rutas cuelgan del prefijo **`/gastronomada/*`**; su home es
+  `/gastronomada`. Es la "demo" enlazada desde el portfolio.
 
-`packages/` exists but is empty (future shared `ui` / `config`). Dependencies are
-hoisted to a single root `node_modules`; `npm install` runs once at the repo root.
-
-Roadmap (see `README.md`): add a third app, then extract shared code into `packages/`.
+> Histórico: antes era un monorepo (npm workspaces + Turborepo con
+> `apps/portfolio` y `apps/gastronomada`). Se fusionó en una sola app. Ya **no**
+> hay Turbo, `apps/` ni `packages/`.
 
 ## Commands
 
-Run from the **repo root** (`dev-portfolio/`) — Turbo fans out to the workspaces:
-
 ```bash
-npm install                  # install all workspaces (hoisted)
-npm run dev                  # turbo run dev — both apps (3000 + 3001)
-npm run dev:portfolio        # only portfolio (turbo --filter=portfolio)
-npm run dev:gastronomada     # only gastronomada
-npm run build                # turbo run build — validation gate (no test suite)
-npm run lint                 # turbo run lint
+npm install
+npm run dev          # next dev (por defecto :3000)
+npm run build        # next build — puerta de validación (no hay tests)
+npm run lint         # eslint
 ```
 
-A single app can also be driven from its own dir (`cd apps/<app> && npm run <script>`).
-There are no tests. `npm run build` is the validation gate.
-
-> Per project convention, **do not start the dev server** to verify visually — the
-> user reviews the running app themselves. Validate with `npm run build` / `npm run lint`.
-
-## Cross-app links
-
-The two apps link to each other by URL, resolved from env vars with dev-port defaults:
-
-- portfolio → gastronomada: `NEXT_PUBLIC_GASTRONOMADA_URL` (default `http://localhost:3001`),
-  used in `apps/portfolio/lib/projects.ts`.
-- gastronomada → portfolio: `NEXT_PUBLIC_PORTFOLIO_URL` (default `http://localhost:3000`),
-  used in `apps/gastronomada/components/Footer.tsx`.
-
-Set the real deployed URLs via each app's `.env` in production (see `.env.example`).
+> Convención del proyecto: **no arrancar el dev server** para verificar
+> visualmente — el usuario revisa la app él mismo. Validar con `build` / `lint`.
 
 ## Stack
 
 Next.js 16 (App Router) · React 19 · TypeScript (strict) · Tailwind CSS v4.
-Each app has its own `@/*` import alias mapping to that app's root.
+Alias único `@/*` → raíz del repo (ver `tsconfig.json`).
 
-> The rest of this file documents **`apps/portfolio`** specifically;
-> for the gastronomada app see `apps/gastronomada/CLAUDE.md`.
+## Arquitectura de rutas y layouts
 
-## Architecture
+Un solo árbol `app/`, con un shell raíz y una sección por experiencia:
 
-The portfolio is a single static page (`app/page.tsx`) styled as a terminal/CMD window.
+- **`app/layout.tsx`** — ÚNICO layout con `<html>`/`<body>`. Carga las dos
+  fuentes (Geist sans + Geist Mono) como variables CSS y aplica `.dark` en
+  `<html>` según la cookie de tema. **No fija fondo ni tipografía en `body`**:
+  como el mismo `body` sirve dos estéticas, cada sección lo hace en su envoltorio.
+- **`app/(portfolio)/`** — route group (no añade segmento) → sirve `/`.
+  `layout.tsx` envuelve en la estética terminal (`bg-term-bg`, `font-mono`).
+  `page.tsx` es la página del portfolio.
+- **`app/gastronomada/`** — sección GastroNómada (`/gastronomada/*`).
+  `layout.tsx` monta Nav + Footer + providers (tema/sesión/tiempo real) y el
+  fondo `bg-app-bg font-sans`. Cada ruta es una carpeta plana
+  (`login`, `registro`, `foro`, `buzon`, `buzon/[usuario]`, `perfil`,
+  `gastronomia-mundo`, `recetas-modernas`, …).
 
-- **Data is separated from presentation.** All content lives in `lib/` as the single
-  source of truth and the UI iterates over it — never hardcode profile/project
-  literals in components:
-  - `lib/profile.ts` → `PROFILE` (name/role/summary) + `CONTACTS[]`.
-  - `lib/projects.ts` → `PROJECTS[]` (typed `Project`). Adding a project = adding one
-    array entry; the UI renders it automatically. Note the `href: "#"` placeholders
-    still pending real URLs.
-- **Components** (`components/`) are presentational and reusable:
-  `Terminal` (window chrome), `PromptLine` (the `visitante@portfolio:~$ <cmd>` line),
-  `ProjectEntry` (renders one `Project` as `ls`-style output).
+Código compartido en la raíz (el alias `@/*` resuelve ahí): `components/`,
+`lib/`, `hooks/`, `public/`. Los nombres de `components/*` y `lib/*` de las dos
+secciones **no colisionan**, por eso conviven en las mismas carpetas.
 
-### Tailwind v4 theming — important
+### Datos del portfolio
 
-Styling uses Tailwind v4 with `@import "tailwindcss"` in `app/globals.css`. The
-terminal color palette is defined as design tokens in an `@theme {}` block
-(`--color-term-green`, `--color-term-bg`, etc.), which generates aliased utilities
-like `bg-term-surface` / `text-term-green`. **Use these token utilities in JSX rather
-than arbitrary color values.**
+Contenido separado de la presentación (fuente única de verdad en `lib/`):
+`lib/profile.ts` (`PROFILE` + `CONTACTS[]`) y `lib/projects.ts` (`PROJECTS[]`).
+La UI itera; añadir un proyecto = añadir una entrada. La demo de GastroNómada es
+un enlace **interno** `/gastronomada` (ya no una URL/dominio aparte).
 
-The CSS reset (`* { margin/padding/box-sizing }`, `body`, `a`) **must stay inside
-`@layer base`** — outside a layer it overrides Tailwind's own utilities. This is a
-known gotcha; do not move it out of the layer.
+## GastroNómada — protección de rutas y backend
+
+- **`proxy.ts`** (antes `middleware.ts`; Next 16 renombró la convención) protege
+  solo `/gastronomada/*` (matcher). Filtro OPTIMISTA: comprueba la presencia de
+  la cookie de sesión y redirige a `/gastronomada/login`; la validación
+  autoritativa la hace `getSession()` en el servidor.
+- **`next.config.ts`** reescribe `/api/*` → `BACKEND_URL` (Fastify + better-auth),
+  así la cookie httpOnly viaja por el mismo origen sin CORS. Variables en
+  `.env.example`. Detalle en **`GASTRONOMADA.md`** y contrato en **`FRONT.md`**.
+
+## Tailwind v4 theming — importante
+
+Un solo `app/globals.css` con `@import "tailwindcss"`. Conviven **dos juegos de
+tokens** que no comparten nombres:
+
+- Terminal (portfolio): `@theme { --color-term-* , --font-mono }` → utilidades
+  `bg-term-bg`, `text-term-green`, etc.
+- GastroNómada: tokens `--app-*`/`--surface-*`/`--brand-*` + shadcn (`@theme
+  inline`, `.dark`).
+
+Usa esas utilidades con token en el JSX, no valores arbitrarios.
+
+El **reset CSS** (`* { margin/padding/box-sizing }`) y `* { @apply border-border
+outline-ring/50 }` van dentro de **`@layer base`** — fuera de un layer pisarían
+las utilidades de Tailwind (gotcha conocido; no lo saques del layer). El fondo y
+la tipografía **no** se fijan en `body`: los pone el layout de cada sección.

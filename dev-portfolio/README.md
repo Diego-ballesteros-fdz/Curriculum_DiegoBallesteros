@@ -1,43 +1,57 @@
-# dev-portfolio · Monorepo
+# dev-portfolio
 
-Monorepo de presentación de Diego Ballesteros Fernández — _Junior Backend Developer_.
+Sitio de presentación de Diego Ballesteros Fernández — _Junior Backend Developer_.
 
-Alberga varios proyectos bajo un mismo techo, gestionados con **npm workspaces +
-Turborepo**. Los nuevos proyectos se incorporan como `apps/*`.
+Una **única app Next.js 16** (App Router) que integra dos experiencias bajo el
+mismo despliegue:
+
+- **Portfolio** (raíz `/`) — landing estilo terminal/CMD.
+- **GastroNómada** (`/gastronomada/*`) — red social gastronómica con auth
+  (better-auth), foro, buzón y recetas, servida desde la demo del portfolio.
+
+> Antes era un monorepo (npm workspaces + Turborepo con `apps/portfolio` y
+> `apps/gastronomada`). Se fusionó en una sola app para desplegar en un único
+> proyecto de Vercel.
 
 ## Estructura
 
 ```
 dev-portfolio/
-├── apps/
-│   ├── portfolio/      # Landing estilo terminal/CMD (Next.js 16) · puerto 3000
-│   └── gastronomada/   # App gastronómica con auth/foro/buzón (Next.js 16) · puerto 3001
-├── packages/           # Código compartido (vacío por ahora)
-├── turbo.json          # Pipeline de Turborepo
-└── package.json        # Workspaces + scripts raíz
+├── app/
+│   ├── layout.tsx          # shell raíz: <html>/<body>, fuentes, .dark por cookie
+│   ├── globals.css         # Tailwind v4 + tokens del terminal y de GastroNómada
+│   ├── (portfolio)/        # sección portfolio → sirve "/"
+│   │   ├── layout.tsx      # estética terminal (fondo oscuro, mono)
+│   │   └── page.tsx
+│   └── gastronomada/       # sección GastroNómada → "/gastronomada/*"
+│       ├── layout.tsx      # Nav + Footer + providers (tema/sesión/realtime)
+│       ├── page.tsx        # home de la app
+│       └── <ruta>/page.tsx # login, registro, foro, buzón, perfil, recetas…
+├── components/             # UI de ambas secciones (nombres sin colisión)
+├── lib/                    # datos (profile/projects) + api/auth/schemas/… de gastro
+├── hooks/  ·  public/      # hooks y assets (incluye /imagenes de GastroNómada)
+├── proxy.ts               # protege /gastronomada/* (antes middleware.ts)
+└── next.config.ts          # proxy /api/* → backend (Fastify + better-auth)
 ```
-
-### Roadmap del monorepo
-
-- [x] `apps/portfolio` — landing/portfolio
-- [x] `apps/gastronomada` — proyecto migrado al monorepo
-- [x] Turborepo + npm workspaces
-- [ ] `apps/*` — tercer proyecto (pendiente)
-- [ ] `packages/ui`, `packages/config` — extraer lo compartido
 
 ## Desarrollo
 
-Todo desde la raíz del monorepo; Turbo orquesta los workspaces:
-
 ```bash
-npm install                  # instala todas las apps (node_modules hoisteado)
-npm run dev                  # arranca ambas apps (portfolio:3000 + gastronomada:3001)
-npm run dev:portfolio        # solo portfolio
-npm run dev:gastronomada     # solo gastronomada
-npm run build                # build de producción de todas las apps
-npm run lint                 # lint de todas las apps
+npm install
+npm run dev          # arranca la app (por defecto en :3000)
+npm run build        # build de producción — puerta de validación (no hay tests)
+npm run lint
 ```
 
-Las apps se enlazan entre sí por URL (variables `NEXT_PUBLIC_PORTFOLIO_URL` /
-`NEXT_PUBLIC_GASTRONOMADA_URL`, con los puertos de desarrollo como valor por defecto;
-ver el `.env.example` de cada app para producción).
+> Convención del proyecto: **no arrancar el dev server** para verificar
+> visualmente; el propio usuario revisa la app. Se valida con `build` / `lint`.
+
+## Backend y entorno
+
+GastroNómada habla con un backend externo (Fastify + better-auth). El front
+reescribe `/api/*` hacia `BACKEND_URL` (ver `next.config.ts`), de modo que la
+cookie de sesión vive en este origen. Variables en `.env.example`
+(`BACKEND_URL`, `NEXT_PUBLIC_AUTH_URL`, `NEXT_PUBLIC_WS_URL`).
+
+Documentación de referencia: **`GASTRONOMADA.md`** (detalle de la app) y
+**`FRONT.md`** (contrato con el backend).
