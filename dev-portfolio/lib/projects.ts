@@ -19,6 +19,7 @@ export type Project = {
   description: string;
   stack: string[];
   links: ProjectLink[];
+  info?: string;
 };
 
 /**
@@ -81,7 +82,7 @@ export const PROJECTS: Project[] = [
     tag: "En desarrollo",
     description:
       "Red social para cocineros profesionales donde compartir recetas. Migrada a Next.js 16 (App Router). " +
-      "Backend planificado con Fastify, Prisma, WebSockets y SSO; ahora mismo blindando el acceso de usuarios no registrados. Para poder acceder usar email: admin@gastronomada.com. Password: Admin123.",
+      "Backend planificado con Fastify, Prisma, WebSockets y SSO; ahora mismo blindando el acceso de usuarios no registrados.",
     stack: [
       "Next.js",
       "TypeScript",
@@ -97,5 +98,6 @@ export const PROJECTS: Project[] = [
         href: "https://github.com/Diego-ballesteros-fdz/Curriculum_DiegoBallesteros",
       },
     ],
+    info: "Datos usuario \n email: admin@gastronomada.com \n Password: Admin123. ",
   },
 ];

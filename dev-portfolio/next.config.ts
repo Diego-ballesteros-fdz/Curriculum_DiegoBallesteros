@@ -7,7 +7,17 @@ import type { NextConfig } from "next";
  * (`getSession`) y el middleware pueden leerla. En producción, apúntala al
  * dominio real del backend.
  */
-const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:4000";
+const rawBackend = process.env.BACKEND_URL || "http://localhost:4000";
+
+/**
+ * Vercel exige que el `destination` de un rewrite empiece por `/`, `http://` o
+ * `https://`. Si `BACKEND_URL` viene sin esquema (p. ej. `mi-backend.com`), se
+ * asume `https://`; además se quita la barra final para no duplicarla con
+ * `/api/...`.
+ */
+const BACKEND_URL = (
+  /^https?:\/\//.test(rawBackend) ? rawBackend : `https://${rawBackend}`
+).replace(/\/+$/, "");
 
 const nextConfig: NextConfig = {
   async rewrites() {

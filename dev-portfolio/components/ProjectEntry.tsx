@@ -18,9 +18,11 @@ export default function ProjectEntry({
       {/* Línea tipo `ls`: nº, directorio, etiqueta */}
       <header className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
         <span className="text-term-dim">{num}</span>
-        <span className="text-base font-bold text-term-green">
-          {project.slug}/
-        </span>
+        <a href={project.links?.[0]?.href ? project.links?.[0]?.href : "#"}>
+          <span className="text-lg text-base font-bold text-term-green">
+            {project.slug}/
+          </span>
+        </a>
         <span className="text-sm text-term-amber">[{project.tag}]</span>
       </header>
 
@@ -29,6 +31,11 @@ export default function ProjectEntry({
       <p className="mt-2 max-w-2xl text-sm text-term-dim">
         {project.description}
       </p>
+      {project.info && (
+        <p className="whitespace-pre-line mt-2 max-w-2xl text-sm text-term-dim">
+          {project.info}
+        </p>
+      )}
 
       {/* Stack como tags */}
       <ul className="mt-3 flex flex-wrap gap-2">
@@ -51,7 +58,7 @@ export default function ProjectEntry({
               href={link.href}
               target={link.href.startsWith("http") ? "_blank" : undefined}
               rel="noopener noreferrer"
-              className="text-term-green underline decoration-term-border underline-offset-4 hover:decoration-term-green"
+              className="text-lg text-term-green underline decoration-term-border underline-offset-4 hover:decoration-term-green"
             >
               ./{link.label}
             </a>
