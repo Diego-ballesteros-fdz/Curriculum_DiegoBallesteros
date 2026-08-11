@@ -30,6 +30,30 @@ const GASTRONOMADA_URL = "/gastronomada";
 
 export const PROJECTS: Project[] = [
   {
+    slug: "gastronomada",
+    name: "Gastronómada",
+    tag: "En desarrollo",
+    description:
+      "Red social para cocineros profesionales donde compartir recetas. Migrada a Next.js 16 (App Router). " +
+      "Backend planificado con Fastify, Prisma, WebSockets y SSO; ahora mismo blindando el acceso de usuarios no registrados.",
+    stack: [
+      "Next.js",
+      "TypeScript",
+      "Tailwind CSS",
+      "Fastify",
+      "Prisma",
+      "WebSockets",
+    ],
+    links: [
+      { label: "demo", href: GASTRONOMADA_URL },
+      {
+        label: "repo",
+        href: "https://github.com/Diego-ballesteros-fdz/Curriculum_DiegoBallesteros",
+      },
+    ],
+    info: "Datos usuario \n email: admin@gastronomada.com \n Password: Admin123. ",
+  },
+  {
     slug: "aws-dashboard",
     name: "AWS Dashboard",
     tag: "TFG",
@@ -50,6 +74,30 @@ export const PROJECTS: Project[] = [
       "Vercel",
     ],
     links: [{ label: "repo", href: "https://github.com/AWSDashboard" }],
+  },
+  {
+    slug: "artquiz",
+    name: "ArtQuiz",
+    tag: "En desarrollo",
+    description:
+      "Aplicación de retos diarios y aprendizaje sobre arte e historia del arte. Backend en Spring Boot " +
+      "(Java 17) con arquitectura por capas, JPA/Hibernate y PostgreSQL; ahora mismo diseñando la lógica " +
+      "del reto diario y preparando la capa de seguridad con Spring Security y JWT.",
+    stack: [
+      "Java",
+      "Spring Boot",
+      "Spring Data JPA",
+      "PostgreSQL",
+      "Docker",
+      "Swagger / OpenAPI",
+    ],
+    links: [
+      {
+        label: "repo",
+        href: "https://github.com/Diego-ballesteros-fdz/ArtQuiz-API-REST.git", // ajusta a tu URL real del repo
+      },
+    ],
+    info: "Proyecto en desarrollo, sin despliegue público todavía.",
   },
   {
     slug: "microservicios-home-lab",
@@ -75,29 +123,5 @@ export const PROJECTS: Project[] = [
         href: "https://github.com/AlejandroDCastillo/Game-programacion",
       },
     ],
-  },
-  {
-    slug: "gastronomada",
-    name: "Gastronómada",
-    tag: "En desarrollo",
-    description:
-      "Red social para cocineros profesionales donde compartir recetas. Migrada a Next.js 16 (App Router). " +
-      "Backend planificado con Fastify, Prisma, WebSockets y SSO; ahora mismo blindando el acceso de usuarios no registrados.",
-    stack: [
-      "Next.js",
-      "TypeScript",
-      "Tailwind CSS",
-      "Fastify",
-      "Prisma",
-      "WebSockets",
-    ],
-    links: [
-      { label: "demo", href: GASTRONOMADA_URL },
-      {
-        label: "repo",
-        href: "https://github.com/Diego-ballesteros-fdz/Curriculum_DiegoBallesteros",
-      },
-    ],
-    info: "Datos usuario \n email: admin@gastronomada.com \n Password: Admin123. ",
   },
 ];
