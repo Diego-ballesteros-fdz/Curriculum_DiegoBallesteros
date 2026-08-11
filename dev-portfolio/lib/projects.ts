@@ -30,30 +30,6 @@ const GASTRONOMADA_URL = "/gastronomada";
 
 export const PROJECTS: Project[] = [
   {
-    slug: "artquiz",
-    name: "ArtQuiz",
-    tag: "En desarrollo",
-    description:
-      "Aplicación de retos diarios y aprendizaje sobre arte e historia del arte. Backend en Spring Boot " +
-      "(Java 17) con arquitectura por capas, JPA/Hibernate y PostgreSQL; ahora mismo diseñando la lógica " +
-      "del reto diario y preparando la capa de seguridad con Spring Security y JWT.",
-    stack: [
-      "Java",
-      "Spring Boot",
-      "Spring Data JPA",
-      "PostgreSQL",
-      "Docker",
-      "Swagger / OpenAPI",
-    ],
-    links: [
-      {
-        label: "repo",
-        href: "https://github.com/Diego-ballesteros-fdz/ArtQuiz-API-REST.git",
-      },
-    ],
-    info: "Proyecto en desarrollo, sin despliegue público todavía.",
-  },
-  {
     slug: "gastronomada",
     name: "Gastronómada",
     tag: "En desarrollo",
@@ -76,6 +52,30 @@ export const PROJECTS: Project[] = [
       },
     ],
     info: "Datos usuario \n email: admin@gastronomada.com \n Password: Admin123. ",
+  },
+  {
+    slug: "artquiz",
+    name: "ArtQuiz",
+    tag: "En desarrollo",
+    description:
+      "Aplicación de retos diarios y aprendizaje sobre arte e historia del arte. Backend en Spring Boot " +
+      "(Java 17) con arquitectura por capas, JPA/Hibernate y PostgreSQL; ahora mismo diseñando la lógica " +
+      "del reto diario y preparando la capa de seguridad con Spring Security y JWT.",
+    stack: [
+      "Java",
+      "Spring Boot",
+      "Spring Data JPA",
+      "PostgreSQL",
+      "Docker",
+      "Swagger / OpenAPI",
+    ],
+    links: [
+      {
+        label: "repo",
+        href: "https://github.com/Diego-ballesteros-fdz/ArtQuiz-API-REST.git",
+      },
+    ],
+    info: "Proyecto en desarrollo, sin despliegue público todavía.",
   },
   {
     slug: "aws-dashboard",
